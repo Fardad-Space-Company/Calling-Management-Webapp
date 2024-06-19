@@ -76,7 +76,7 @@ def chooseshop(request):
             for idx, shop in enumerate(shop_data) if shop
         ]
         request.session['shop_data'] = shops
-        print(shops)
+        
         return render(request, 'home/table-list.html', {'shops': shops})
     except requests.exceptions.RequestException as e:
         return JsonResponse({'error': str(e)})
@@ -105,3 +105,4 @@ def shop_detail(request, shop_id):
 #         raise Http404("Shop not found")
     
 #     return render(request, 'home/shop_detail.html', {'shop': shop})
+
