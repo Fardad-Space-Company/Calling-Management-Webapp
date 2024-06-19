@@ -1,0 +1,81 @@
+{% extends "layouts/base.html" %}
+
+{% block stylesheets %}
+<style>
+  .shop-detail-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+
+  .shop-header h1 {
+    margin: 0;
+    font-size: 2.4em;
+    color: #333333;
+  }
+
+  .shop-address,
+  .shop-phone {
+    margin: 20px 0;
+    font-size: 1.2em;
+    color: #555555;
+  }
+
+  .icon {
+    margin-right: 10px;
+    vertical-align: middle;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    font-size: 1em;
+  }
+
+  .back-link:hover {
+    background-color: #0056b3;
+  }
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="shop-detail-container">
+  <div class="shop-header">
+    <h1>{{ shop.name }}</h1>
+  </div>
+  
+  <div class="shop-address">
+    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4A90E2" width="24" height="24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+    <span>{{ shop.address }}</span>
+  </div>
+  
+  <div class="shop-phone">
+    <i class="fa fa-phone icon"></i>
+    <span>{{ shop.phone_number }}</span>
+  </div>
+
+  <a href="{% url 'table_list' %}" class="back-link">Back to Table-list</a>
+</div>
+{% endblock content %}

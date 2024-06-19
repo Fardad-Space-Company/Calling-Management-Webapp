@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+          background-color: #f8f9fa;
+      }
+  
+      .login-container {
+          max-width: 400px;
+          margin: 0 auto;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+          background-color: #fff;
+          margin-top: 100px;
+      }
+  
+      .login-container h2 {
+          text-align: center;
+          margin-bottom: 30px;
+          color: #333;
+      }
+  
+      .login-container .form-group {
+          margin-bottom: 20px;
+      }
+  
+      .login-container input[type="text"],
+      .login-container input[type="password"] {
+          padding: 12px;
+          border: 1px solid #ced4da;
+          border-radius: 5px;
+          width: 100%;
+          transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+      }
+  
+      .login-container input[type="text"]:focus,
+      .login-container input[type="password"]:focus {
+          border-color: hsl(44, 100%, 50%);
+          outline: 0;
+          box-shadow: 0 0 0 0.2rem rgba(255, 183, 0, 0.895);
+      }
+  
+      .login-container .btn-login {
+          padding: 10px 15px;  /* Adjust the padding as needed */
+          background-color: #f57c00; /* Orange background */
+          border: 1px solid #f57c00; /* Orange border */
+          color: white; /* White text color */
+          border-radius: 20px;
+          transition: background-color 0.3s, border-color 0.3s; /* Smooth transition for hover effect */
+      }
+  
+      .login-container .btn-login:hover {
+          background-color: #e65100; /* Darker orange on hover */
+          border-color: #e65100; /* Darker orange border on hover */
+      }
+  
+      .login-container .btn-login:focus {
+          box-shadow: 0 0 0 0.2rem rgba(255,112,0,.5); /* Orange glow on focus */
+      }
+  </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="login-container">
+                <h2>Login</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.password.label_tag }}
+                        {{ form.password }}
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block btn-login">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS (optional) -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}
+<style>
+  .container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f4f4f4;
+    text-align: center;
+  }
+
+  .calendar th {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+  }
+
+  .calendar td {
+    padding: 10px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+  }
+
+  .calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px; /* Adjust margin for separation */
+    margin: 'left'; 
+  }
+
+  .today {
+    background-color: yellow;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+  }
+</style>
+{% endblock stylesheets %}
+
+{% load static %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-warning card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">content_copy</i>
+                </div>
+                <p class="card-category">Used Space</p>
+                <h3 class="card-title">49/50
+                    <small>GB</small>
+                </h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons text-danger">warning</i>
+                    <a href="#pablo">Get More Space...</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-success card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">store</i>
+                </div>
+                <p class="card-category">Revenue</p>
+                <h3 class="card-title">$34,245</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">date_range</i> Last 24 Hours
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-danger card-header-icon">
+                <div class="card-icon">
+                    <i class="material-icons">info_outline</i>
+                </div>
+                <p class="card-category">Fixed Issues</p>
+                <h3 class="card-title">75</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">local_offer</i> Tracked from Github
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6">
+        <div class="card card-stats">
+            <div class="card-header card-header-info card-header-icon">
+                <div class="card-icon">
+                    <i class="fa fa-twitter"></i>
+                </div>
+                <p class="card-category">Followers</p>
+                <h3 class="card-title">+245</h3>
+            </div>
+            <div class="card-footer">
+                <div class="stats">
+                    <i class="material-icons">update</i> Just Updated
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+        <div class="card card-chart">
+            <!-- Add chart or other content here -->
+        </div>
+    </div>
+    <div class="col-md-8">
+        <!-- Calendar Section -->
+        <div class="container">
+          <div class="calendar-section">
+            <h1>Events Calendar</h1>
+            <table class="calendar">
+              <thead>
+                <tr>
+                  <th>Sun</th>
+                  <th>Mon</th>
+                  <th>Tue</th>
+                  <th>Wed</th>
+                  <th>Thu</th>
+                  <th>Fri</th>
+                  <th>Sat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+                <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
+                <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
+                <tr><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
+                <tr><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    highlightToday();
+  });
+
+  function highlightToday() {
+    const today = new Date();
+    const currentDay = today.getDate();
+    const currentMonth = today.getMonth(); // January is 0!
+    const currentYear = today.getFullYear();
+
+    const cells = document.querySelectorAll('.calendar td');
+    cells.forEach(function(cell) {
+      const cellDay = parseInt(cell.textContent.trim());
+      if (cellDay && cellDay === currentDay) {
+        const cellDate = new Date(currentYear, currentMonth, cellDay);
+        if (cellDate.getMonth() === currentMonth) {
+          cell.classList.add('today'); // Apply 'today' class style
+        }
+      }
+    });
+  }
+</script>
+{% endblock javascripts %}
