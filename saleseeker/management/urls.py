@@ -8,6 +8,8 @@ urlpatterns = [
     path('table-list/', views.table_list, name='table_list'),
     path('shop/',views.chooseshop, name='shopchoosing' ),
     path('shop/<int:shop_id>/', views.shop_detail, name='shop_detail'),
+    path('shop/data_entry', views.data_entry, name='data_entry'),
+
 
 
 ]

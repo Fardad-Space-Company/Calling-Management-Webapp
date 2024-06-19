@@ -93,6 +93,10 @@ def shop_detail(request, shop_id):
         raise Http404("Shop not found")
     return render(request, 'home/shop_detail.html', {'shop': shop})
 
+def data_entry(request):
+    return render(request, 'home/data-entry.html')
+    
+    
 # def shop_detail(request, shop_id):
 #     shop_data = request.session.get('shop_data', [])
 #     # Convert shop_id to integer since session data stores it as an integer
