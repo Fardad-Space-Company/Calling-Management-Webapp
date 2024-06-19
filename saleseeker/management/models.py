@@ -41,13 +41,14 @@ class CRMbackend(models.Model):
     Date = models.TextField(null=False)
     CallDuration = models.TextField(null=True, blank=True)
     Email = models.CharField(max_length=50, null=True, blank=True)
-    AppointmentDate = models.TextField(null=True, blank=True)  # fixed typo: Appointement_Date -> AppointmentDate
+    Appointement_Date = models.TextField(null=True, blank=True)  # renamed from Appointement_Date to match the SQL definition
     OWname = models.CharField(max_length=20, null=True, blank=True)
     OWnum = models.CharField(max_length=15, null=True, blank=True)
     GKname = models.CharField(max_length=20, null=True, blank=True)
     GKnum = models.CharField(max_length=15, null=True, blank=True)
     Note = models.TextField(null=True, blank=True)
-    ShopStatus = models.CharField(max_length=20, null=False)  # fixed typo: Shop_Status -> ShopStatus
+    Shop_Status = models.CharField(max_length=20, null=False)  # renamed from Shop_Status to match the SQL definition
+    AutoId = models.AutoField(primary_key=True)
 
     class Meta:
         db_table = 'CRMbackend'

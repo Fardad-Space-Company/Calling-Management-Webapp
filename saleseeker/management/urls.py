@@ -9,6 +9,7 @@ urlpatterns = [
     path('shop/',views.chooseshop, name='shopchoosing' ),
     path('shop/<int:shop_id>/', views.shop_detail, name='shop_detail'),
     path('shop/data_entry', views.data_entry, name='data_entry'),
+    path('shop/crmbackend', views.crmbackend, name='crmbackend'),
 
 
 
