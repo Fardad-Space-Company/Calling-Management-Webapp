@@ -53,9 +53,14 @@ def table_list(request):
 def chooseshop(request):
     city = request.GET.get('city', '')
     postcode = request.GET.get('postcode', '')
+    # Get the current date
     today = datetime.date.today()
+
+    # Print the day name
+    day_name = today.strftime("%A")
+    print(day_name)
     try:
-        url = f"http://198.244.148.241:5000/shops/{city}/{postcode}/{today}"
+        url = f"http://198.244.148.241:5000/shops/{city}/{postcode}/{day_name}"
         response = requests.get(url)
         response.raise_for_status()  # Raise an HTTPError for bad responses
         shop_data = response.json()
@@ -65,11 +70,13 @@ def chooseshop(request):
                 'id': idx,
                 'name': shop[0],
                 'address': shop[1] if shop[1] and str(shop[1]).lower() != 'nan' else "Address not available",
-                'phone_number': shop[2] if shop[2] and str(shop[2]).lower() != 'nan' else "Phone not available"
+                'phone_number': shop[2] if shop[2] and str(shop[2]).lower() != 'nan' else "Phone not available",
+                'opening_hours': shop[4],
             }
             for idx, shop in enumerate(shop_data) if shop
         ]
         request.session['shop_data'] = shops
+        print(shops)
         return render(request, 'home/table-list.html', {'shops': shops})
     except requests.exceptions.RequestException as e:
         return JsonResponse({'error': str(e)})
