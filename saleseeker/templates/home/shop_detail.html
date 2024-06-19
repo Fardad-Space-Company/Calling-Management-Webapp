@@ -28,7 +28,8 @@
   }
 
   .shop-address,
-  .shop-phone {
+  .shop-phone,
+  .opening-hours {
     margin: 20px 0;
     font-size: 1.2em;
     color: #555555;
@@ -74,6 +75,11 @@
   <div class="shop-phone">
     <i class="fa fa-phone icon"></i>
     <span>{{ shop.phone_number }}</span>
+  </div>
+
+  <div class="opening-hours">
+    <i class="fa fa-clock-o icon"></i>
+    <span>{{ shop.opening_hours }}</span>
   </div>
 
   <a href="{% url 'table_list' %}" class="back-link">Back to Table-list</a>

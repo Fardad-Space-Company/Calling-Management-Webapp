@@ -1,0 +1,143 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Business Form{% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
+        background-color: #f4f4f4; /* Softer background color */
+        padding: 40px; /* More space around the form */
+        color: #333; /* Darker text for better readability */
+    }
+
+    .form-container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px; /* More pronounced rounded corners */
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Deeper shadow for 3D effect */
+        width: 90%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    h2 {
+        color: #5a5a5a; /* Softer color for headers */
+        border-bottom: 2px solid #ddd; /* Thicker and lighter border under headings */
+        padding-bottom: 10px; /* More space under the text */
+        margin-bottom: 20px; /* More space to the next section */
+        font-size: 24px; /* Larger font size for headings */
+    }
+
+    .form-group {
+        margin-bottom: 20px; /* Larger space between form groups */
+    }
+
+    label {
+        font-weight: 600; /* Bold labels */
+        margin-bottom: 8px; /* Slightly more space below labels */
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    textarea {
+        width: 100%;
+        padding: 12px; /* More padding for better touch interaction */
+        margin-top: 5px; /* Standardized margin top */
+        border: 2px solid #ddd; /* Subtle border style */
+        border-radius: 6px; /* Smoothed corners */
+        transition: border-color 0.3s; /* Smooth transition for interactive elements */
+    }
+
+    input[type="text"]:hover,
+    input[type="email"]:hover,
+    input[type="tel"]:hover,
+    input[type="date"]:hover,
+    textarea:hover {
+        border-color: #aaa; /* Change border color on hover */
+    }
+
+    textarea {
+        height: 120px; /* Slightly larger text area */
+        resize: vertical; /* Allow only vertical resizing */
+    }
+
+    button {
+        padding: 12px 25px;
+        background-color: #007bff; /* Bootstrap primary blue */
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: block;
+        margin: 20px auto; /* Center button and more margin */
+        transition: background-color 0.3s, transform 0.2s; /* Smooth background and transform transitions */
+    }
+
+    button:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+        transform: translateY(-2px); /* Slight lift effect */
+    }
+</style>
+
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="form-container">
+    <form>
+        <h2>Shop Information</h2>
+        <div class="form-group">
+            <label for="shopName">Shop Name:</label>
+            <input type="text" id="shopName" name="shopName" placeholder="Enter shop name">
+        </div>
+        <div class="form-group">
+            <label for="shopStatus">Shop Status:</label>
+            <input type="text" id="shopStatus" name="shopStatus" placeholder="Active, Closed, etc.">
+        </div>
+
+        <h2>Client Information</h2>
+        <div class="form-group">
+            <label for="shopClient">Shop Client:</label>
+            <input type="text" id="shopClient" name="shopClient" placeholder="Client's name">
+        </div>
+        <div class="form-group">
+            <label for="clientPhone">Shop Client Phone Number:</label>
+            <input type="tel" id="clientPhone" name="clientPhone" placeholder="E.g., +447500000000">
+        </div>
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" placeholder="example@domain.com">
+        </div>
+
+        <h2>Staff Information</h2>
+        <div class="form-group">
+            <label for="staff">Staff:</label>
+            <input type="text" id="staff" name="staff" placeholder="Staff member's name">
+        </div>
+        <div class="form-group">
+            <label for="staffPhone">Staff Phone Number:</label>
+            <input type="tel" id="staffPhone" name="staffPhone" placeholder="E.g., +447500000000">
+        </div>
+
+        <h2>Miscellaneous Details</h2>
+        <div class="form-group">
+            <label for="dealStatus">Deal Status:</label>
+            <input type="text" id="dealStatus" name="dealStatus" placeholder="Pending, Completed, etc.">
+        </div>
+        <div class="form-group">
+            <label for="note">Note:</label>
+            <textarea id="note" name="note" placeholder="Additional notes"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="calendar">Calendar:</label>
+            <input type="date" id="calendar" name="calendar">
+        </div>
+
+        <button type="submit">Submit Form</button>
+    </form>
+</div>
+{% endblock content %}
