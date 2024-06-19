@@ -12,25 +12,6 @@
     text-align: center;
   }
 
-  .calendar th {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-  }
-
-  .calendar td {
-    padding: 10px;
-    background-color: #eee;
-    border: 1px solid #ccc;
-  }
-
-
-  .today {
-    background-color: yellow;
-    color: rgb(0, 0, 0);
-    font-weight: bold;
-  }
-
   .search-section {
     max-width: 1200px;
     margin: 0 auto;
@@ -112,13 +93,13 @@
     background-color: #f9f9f9;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    max-height: 200px; /* Increased max-height for more space */
+    max-height: 200px;
     overflow-y: auto;
-    width: calc(100% - 2px); /* Adjusted width to match the input field */
-    left: 1px; /* Align with the input field */
-    top: calc(100% - 1px); /* Position below the input field */
-    border: 1px solid #ccc; /* Added border for better visibility */
-    border-top: none; /* Remove top border to avoid double borders */
+    width: calc(100% - 2px);
+    left: 1px;
+    top: calc(100% - 1px);
+    border: 1px solid #ccc;
+    border-top: none;
   }
 
   .dropdown-content a {
@@ -144,57 +125,61 @@
     text-align: center;
     min-height: 100px;
   }
+
   .shop-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 3fr 2fr;  /* Adjust column sizes as needed */
+    gap: 10px;
     padding: 15px;
     margin: 10px auto;
-    width: 90%;
+    width: 100%;  /* Adjust width to fit your design */
     background-color: #f0f0f0;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    align-items: center;
 }
 
-.shop-details {
-    display: flex;
-    align-items: center;
-    flex-grow: 1;
-}
-  .postcode-container {
-    background-color: white;
-    border: 1px solid #ccc;
-    margin: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .postcode-container h2 {
+.shop-container h4 {
+    font-weight: bold;
     margin: 0;
-    font-size: 24px; /* Adjust the font size as needed */
+    color: #333;
   }
+  .shop-details {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .address-container {
     display: flex;
     align-items: center;
-}
+  }
 
-.address-icon {
-    margin-right: 10px;
+  .address-icon {
+    margin-right: 2px;  /* Adjust this value to reduce the space */
+    margin-bottom: 14px;
+    width: 30px;  /* Maintain icon size */
+    height: 30px; 
+    gap:1px; /* Maintain icon size */
 }
+  /* .phone-number {
+    display: flex;
+    align-items: center;
+    color: #12b43d;
+    font-weight: bold;
+  } */
+
   .fa-phone,
   .call-icon {
-    margin-left: auto;
+    margin-right: 2px;
     width: 30px;
     height: 30px;
     color: #12b43d;
+    gap:1px;
   }
 </style>
-
 {% endblock stylesheets %}
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 {% block content %}
@@ -235,16 +220,18 @@
     {% for shop in shops %}
     {% if shop.id %}
     <a href="{% url 'shop_detail' shop.id %}" class="shop-container">
-        <div class="shop-details">
-            <h3>{{ shop.name }}</h3>
-            <div class="address-container">
-                <svg class="address-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4A90E2" width="24" height="24">
-                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
-                </svg>
-                <p>{{ shop.address }}</p>
-            </div>
+        <div>
+            <h4>{{ shop.name }}</h4>
         </div>
-        <p><i class="fa fa-phone call-icon"></i> {{ shop.phone_number }}</p>
+        <div class="address-container">
+            <svg class="address-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#4A90E2" width="24" height="24">
+                <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </svg>
+            <p>{{ shop.address }}</p>
+        </div>
+        <div>
+            <p><i class="fa fa-phone call-icon"></i> {{ shop.phone_number }}</p>
+        </div>
     </a>
     {% endif %}
     {% empty %}
@@ -256,14 +243,9 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const cityInput = document.getElementById('text-input-city');
-    if (cityInput) {
-      cityInput.value = '';
-    }
-  
     const postcodeInput = document.getElementById('text-input-post-code');
-    if (postcodeInput) {
-      postcodeInput.value = '';
-    }
+    if (cityInput) cityInput.value = '';
+    if (postcodeInput) postcodeInput.value = '';
   });
 
   document.getElementById('text-input-city').addEventListener('input', function() {
@@ -300,10 +282,13 @@
   });
 
   function clearCity() {
-    document.getElementById('text-input-city').value = '';
-    document.getElementById('text-input-post-code').value = '';
-    document.getElementById('postcode-dropdown').innerHTML = '';
-    document.getElementById('postcode-dropdown').classList.remove('show');
+    const cityInput = document.getElementById('text-input-city');
+    const postcodeInput = document.getElementById('text-input-post-code');
+    const dropdown = document.getElementById('postcode-dropdown');
+    if (cityInput) cityInput.value = '';
+    if (postcodeInput) postcodeInput.value = '';
+    if (dropdown) dropdown.innerHTML = '';
+    if (dropdown) dropdown.classList.remove('show');
   }
 </script>
 
