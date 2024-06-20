@@ -1,4 +1,6 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
 
 class ShopInfoUnique4(models.Model):
     id = models.AutoField(primary_key=True)
@@ -71,3 +73,11 @@ class CRMbackend(models.Model):
 
     class Meta:
         db_table = 'CRMbackend'
+
+
+# class CustomUser(AbstractUser):
+#     employee_id = models.CharField(max_length=11, default='ADMIN')
+#     # Add any other custom fields you need
+
+#     def __str__(self):
+#         return self.username  # You can choose a different field if preferred
