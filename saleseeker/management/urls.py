@@ -1,8 +1,9 @@
 from django.urls import path
 from . import views 
+from django.contrib import admin
+
 
 urlpatterns = [
-
     path('', views.management, name='management'),
     path('fetch_postcodes/', views.fetch_postcodes, name='fetch_postcodes'),
     path('table-list/', views.table_list, name='table_list'),
