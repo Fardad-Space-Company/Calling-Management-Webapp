@@ -22,20 +22,19 @@
     <div class="card card-profile">
       <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        <a href="#pablo">
-          <img class="img" src="{{ user.profile.image.url }}" />
+          <img class="img" src="{{ user.profile.image.url }}" alt="Profile image">
         </a>
         <div class="card-body">
-          <h6 class="card-category text-gray">{{ user.username }}</h6>
-          <h4 class="card-title">{{ user.email }}</h4>
-          <input type="file" name="image">
+          <input type="file" name="image" class="form-control">
           <button type="submit" class="btn btn-primary btn-round">Upload New Image</button>
         </div>
       </form>
     </div>
   </div>
 </div>
+
 {% endblock content %}
+
 
 {% block javascripts %}
 <!-- Additional JavaScripts -->
