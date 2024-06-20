@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import ShopInfoUnique4, Postcode, CRMbackend
 from django.http import JsonResponse
 import requests
 import datetime
 from django.http import Http404
+from .forms import CRMbackendForm
 
 # @login_required
 def management(request):
@@ -111,13 +112,12 @@ def data_entry(request):
 #     return render(request, 'home/shop_detail.html', {'shop': shop})
 
 def crmbackend(request):
-    if request.method == 'GET':
-        crm_data = list(CRMbackend.objects.values())
-        data = {
-            'crm_data': crm_data,
-        }
-        print(data)
-        return JsonResponse(data)
+    if request.method == 'POST':
+        form = CRMbackendForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_url')  # replace 'success_url' with your actual success URL
     else:
-        # Handle other HTTP methods if needed
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
+        form = CRMbackendForm()
+    
+    return render(request, 'home/data-entry.html', {'form': form}) 
