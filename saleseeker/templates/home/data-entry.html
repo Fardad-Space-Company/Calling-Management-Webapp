@@ -115,10 +115,11 @@
         <!-- Appointment Information Section -->
         <div class="section">
             <h2>Appointment Information</h2>
-            <div class="form-group floating-label">
-                {{ form.Appointement_Date.label_tag }}
-                {{ form.Appointement_Date }}
-            </div>
+            <form>
+                <label for="appointment-date"></label>
+                <input type="date" id="appointment-date" name="appointment-date">
+                <br><br>
+            </form>
         </div>
 
         <!-- Owner Information Section -->
