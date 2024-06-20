@@ -31,3 +31,24 @@ class Postcode(models.Model):
 
     class Meta:
         db_table = 'Postcode' 
+
+
+
+class CRMbackend(models.Model):
+    EmployeeID = models.CharField(max_length=11, null=False)
+    DealStatus = models.CharField(max_length=20, null=False)
+    ShopName = models.CharField(max_length=100, null=False)
+    Date = models.TextField(null=False)
+    CallDuration = models.TextField(null=True, blank=True)
+    Email = models.CharField(max_length=50, null=True, blank=True)
+    Appointement_Date = models.TextField(null=True, blank=True)  # renamed from Appointement_Date to match the SQL definition
+    OWname = models.CharField(max_length=20, null=True, blank=True)
+    OWnum = models.CharField(max_length=15, null=True, blank=True)
+    GKname = models.CharField(max_length=20, null=True, blank=True)
+    GKnum = models.CharField(max_length=15, null=True, blank=True)
+    Note = models.TextField(null=True, blank=True)
+    Shop_Status = models.CharField(max_length=20, null=False)  # renamed from Shop_Status to match the SQL definition
+    AutoId = models.AutoField(primary_key=True)
+
+    class Meta:
+        db_table = 'CRMbackend'

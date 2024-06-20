@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .models import ShopInfoUnique4, Postcode
+from .models import ShopInfoUnique4, Postcode, CRMbackend
 from django.http import JsonResponse
 import requests
 import datetime
@@ -76,7 +76,7 @@ def chooseshop(request):
             for idx, shop in enumerate(shop_data) if shop
         ]
         request.session['shop_data'] = shops
-        print(shops)
+        
         return render(request, 'home/table-list.html', {'shops': shops})
     except requests.exceptions.RequestException as e:
         return JsonResponse({'error': str(e)})
@@ -109,3 +109,15 @@ def data_entry(request):
 #         raise Http404("Shop not found")
     
 #     return render(request, 'home/shop_detail.html', {'shop': shop})
+
+def crmbackend(request):
+    if request.method == 'GET':
+        crm_data = list(CRMbackend.objects.values())
+        data = {
+            'crm_data': crm_data,
+        }
+        print(data)
+        return JsonResponse(data)
+    else:
+        # Handle other HTTP methods if needed
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
