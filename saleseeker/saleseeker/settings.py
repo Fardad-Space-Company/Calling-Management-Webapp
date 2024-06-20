@@ -85,5 +85,5 @@ TEMPLATES = [
         },
     },
 ]
-# sAUTH_USER_MODEL = 'management.CustomUser'
-AUTH_USER_MODEL = 'auth.User'
+
+# AUTH_USER_MODEL = 'auth.User'
