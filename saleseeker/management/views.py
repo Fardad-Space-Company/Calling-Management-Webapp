@@ -1,10 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import ShopInfoUnique4, Postcode, CRMbackend
 from django.http import JsonResponse
 import requests
 import datetime
 from django.http import Http404
+from .forms import CRMbackendForm
 
 # @login_required
 def management(request):
@@ -93,8 +94,8 @@ def shop_detail(request, shop_id):
         raise Http404("Shop not found")
     return render(request, 'home/shop_detail.html', {'shop': shop})
 
-def data_entry(request):
-    return render(request, 'home/data-entry.html')
+# def data_entry(request):
+#     return render(request, 'home/data-entry.html')
     
     
 # def shop_detail(request, shop_id):
@@ -110,7 +111,39 @@ def data_entry(request):
     
 #     return render(request, 'home/shop_detail.html', {'shop': shop})
 
-def crmbackend(request):
+
+def data_entry(request, shop_id):
+    print(shop_id)
+    shop_data = request.session.get('shop_data', [])
+    shop_name = None
+    for item in shop_data:
+        if item['id'] == shop_id:
+            shop_name = item['name']
+            break
+
+    shop = get_object_or_404(CRMbackend, AutoId=shop_id)  # Corrected primary key
+
+    if request.method == 'POST':
+        form = CRMbackendForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_url')  # replace 'success_url' with your actual success URL
+    else:
+        form = CRMbackendForm()
+
+    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name})
+# def crmbackend(request):
+#     if request.method == 'POST':
+#         form = CRMbackendForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('success_url')  # replace 'success_url' with your actual success URL
+#     else:
+#         form = CRMbackendForm()
+    
+#     return render(request, 'home/data-entry.html', {'form': form}) 
+
+def crmbackend_data(request):
     if request.method == 'GET':
         crm_data = list(CRMbackend.objects.values())
         data = {
@@ -121,3 +154,9 @@ def crmbackend(request):
     else:
         # Handle other HTTP methods if needed
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    
+    
+def call_history(request):
+    return render(request, 'home/call-history.html')
+    

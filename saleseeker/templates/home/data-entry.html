@@ -1,142 +1,167 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Business Form{% endblock %}
+{% block title %}Data Entry for {{ shop_name }}{% endblock %}
 
 {% block stylesheets %}
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* More modern font */
-        background-color: #f4f4f4; /* Softer background color */
-        padding: 40px; /* More space around the form */
-        color: #333; /* Darker text for better readability */
+    .form-container {
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+        margin: 20px auto;
+        box-sizing: border-box;
     }
 
-    .form-container {
-        background-color: #fff;
-        padding: 30px;
-        border-radius: 10px; /* More pronounced rounded corners */
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Deeper shadow for 3D effect */
-        width: 90%;
-        max-width: 600px;
-        margin: 0 auto;
+    .section {
+        margin-bottom: 40px;
+        padding: 20px;
+        border: 1px solid #bbb;
+        border-radius: 8px;
+        background-color: #e0e0e0;
     }
 
     h2 {
-        color: #5a5a5a; /* Softer color for headers */
-        border-bottom: 2px solid #ddd; /* Thicker and lighter border under headings */
-        padding-bottom: 10px; /* More space under the text */
-        margin-bottom: 20px; /* More space to the next section */
-        font-size: 24px; /* Larger font size for headings */
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 30px;
     }
 
     .form-group {
-        margin-bottom: 20px; /* Larger space between form groups */
+        position: relative;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
     }
 
-    label {
-        font-weight: 600; /* Bold labels */
-        margin-bottom: 8px; /* Slightly more space below labels */
+    .form-group label {
+        font-size: 16px;
+        color: #666;
         display: block;
+        margin-bottom: 8px;
     }
 
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     input[type="date"],
+    input[type="time"],
     textarea {
         width: 100%;
-        padding: 12px; /* More padding for better touch interaction */
-        margin-top: 5px; /* Standardized margin top */
-        border: 2px solid #ddd; /* Subtle border style */
-        border-radius: 6px; /* Smoothed corners */
-        transition: border-color 0.3s; /* Smooth transition for interactive elements */
+        padding: 10px 0;
+        border: none;
+        border-bottom: 1px solid #ccc;
+        background-color: transparent;
+        font-size: 16px;
+        outline: none;
     }
 
-    input[type="text"]:hover,
-    input[type="email"]:hover,
-    input[type="tel"]:hover,
-    input[type="date"]:hover,
-    textarea:hover {
-        border-color: #aaa; /* Change border color on hover */
-    }
-
-    textarea {
-        height: 120px; /* Slightly larger text area */
-        resize: vertical; /* Allow only vertical resizing */
+    input:focus,
+    textarea:focus {
+        border-bottom: 2px solid #800080;
     }
 
     button {
-        padding: 12px 25px;
-        background-color: #007bff; /* Bootstrap primary blue */
+        padding: 12px 30px;
+        background-color: #007bff;
         color: white;
         border: none;
-        border-radius: 5px;
-        cursor: pointer;
+        border-radius: 4px;
         display: block;
-        margin: 20px auto; /* Center button and more margin */
-        transition: background-color 0.3s, transform 0.2s; /* Smooth background and transform transitions */
+        margin: 30px auto 0;
+        font-weight: bold;
     }
 
     button:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-        transform: translateY(-2px); /* Slight lift effect */
+        background-color: #0056b3;
     }
+    
 </style>
-
 {% endblock stylesheets %}
 
 {% block content %}
-
 <div class="form-container">
-    <form>
-        <h2>Shop Information</h2>
-        <div class="form-group">
-            <label for="shopName">Shop Name:</label>
-            <input type="text" id="shopName" name="shopName" placeholder="Enter shop name">
-        </div>
-        <div class="form-group">
-            <label for="shopStatus">Shop Status:</label>
-            <input type="text" id="shopStatus" name="shopStatus" placeholder="Active, Closed, etc.">
-        </div>
-
-        <h2>Client Information</h2>
-        <div class="form-group">
-            <label for="shopClient">Shop Client:</label>
-            <input type="text" id="shopClient" name="shopClient" placeholder="Client's name">
-        </div>
-        <div class="form-group">
-            <label for="clientPhone">Shop Client Phone Number:</label>
-            <input type="tel" id="clientPhone" name="clientPhone" placeholder="E.g., +447500000000">
-        </div>
-        <div class="form-group">
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" placeholder="example@domain.com">
+    <h1>Data Entry for {{ shop_name }}</h1> <!-- Displaying the shop name -->
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Employee Information Section -->
+        <div class="section">
+            <h2>Employee Information</h2>
+            <div class="form-group floating-label">
+                {{ form.EmployeeID.label_tag }}
+                {{ form.EmployeeID }}
+            </div>
+            <div class="form-group floating-label">
+                {{ form.DealStatus.label_tag }}
+                {{ form.DealStatus }}
+            </div>
         </div>
 
-        <h2>Staff Information</h2>
-        <div class="form-group">
-            <label for="staff">Staff:</label>
-            <input type="text" id="staff" name="staff" placeholder="Staff member's name">
-        </div>
-        <div class="form-group">
-            <label for="staffPhone">Staff Phone Number:</label>
-            <input type="tel" id="staffPhone" name="staffPhone" placeholder="E.g., +447500000000">
-        </div>
-
-        <h2>Miscellaneous Details</h2>
-        <div class="form-group">
-            <label for="dealStatus">Deal Status:</label>
-            <input type="text" id="dealStatus" name="dealStatus" placeholder="Pending, Completed, etc.">
-        </div>
-        <div class="form-group">
-            <label for="note">Note:</label>
-            <textarea id="note" name="note" placeholder="Additional notes"></textarea>
-        </div>
-        <div class="form-group">
-            <label for="calendar">Calendar:</label>
-            <input type="date" id="calendar" name="calendar">
+        <!-- Communication Information Section -->
+        <div class="section">
+            <h2>Communication Information</h2>
+            <div class="form-group floating-label">
+                {{ form.CallDuration.label_tag }}
+                {{ form.CallDuration }}
+            </div>
+            <div class="form-group floating-label">
+                {{ form.Email.label_tag }}
+                {{ form.Email }}
+            </div>
         </div>
 
+        <!-- Appointment Information Section -->
+        <div class="section">
+            <h2>Appointment Information</h2>
+            <form>
+                <label for="appointment-date"></label>
+                <input type="date" id="appointment-date" name="appointment-date">
+                <br><br>
+            </form>
+        </div>
+
+        <!-- Owner Information Section -->
+        <div class="section">
+            <h2>Owner Information</h2>
+            <div class="form-group floating-label">
+                {{ form.OWname.label_tag }}
+                {{ form.OWname }}
+            </div>
+            <div class="form-group floating-label">
+                {{ form.OWnum.label_tag }}
+                {{ form.OWnum }}
+            </div>
+        </div>
+
+        <!-- Gatekeeper Information Section -->
+        <div class="section">
+            <h2>Gatekeeper Information</h2>
+            <div class="form-group floating-label">
+                {{ form.GKname.label_tag }}
+                {{ form.GKname }}
+            </div>
+            <div class="form-group floating-label">
+                {{ form.GKnum.label_tag }}
+                {{ form.GKnum }}
+            </div>
+        </div>
+
+        <!-- Additional Details Section -->
+        <div class="section">
+            <h2>Additional Details</h2>
+            <div class="form-group floating-label">
+                {{ form.Note.label_tag }}
+                {{ form.Note }}
+            </div>
+            <div class="form-group floating-label">
+                {{ form.Shop_Status.label_tag }}
+                {{ form.Shop_Status }}
+            </div>
+        </div>
+
+        <!-- Form Submission Button -->
         <button type="submit">Submit Form</button>
     </form>
 </div>
