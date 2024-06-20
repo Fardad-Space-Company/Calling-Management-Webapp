@@ -94,8 +94,8 @@ def shop_detail(request, shop_id):
         raise Http404("Shop not found")
     return render(request, 'home/shop_detail.html', {'shop': shop})
 
-def data_entry(request):
-    return render(request, 'home/data-entry.html')
+# def data_entry(request):
+#     return render(request, 'home/data-entry.html')
     
     
 # def shop_detail(request, shop_id):
@@ -121,3 +121,15 @@ def crmbackend(request):
         form = CRMbackendForm()
     
     return render(request, 'home/data-entry.html', {'form': form}) 
+
+def crmbackend_data(request):
+    if request.method == 'GET':
+        crm_data = list(CRMbackend.objects.values())
+        data = {
+            'crm_data': crm_data,
+        }
+        print(data)
+        return JsonResponse(data)
+    else:
+        # Handle other HTTP methods if needed
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
