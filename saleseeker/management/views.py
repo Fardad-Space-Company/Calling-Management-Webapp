@@ -111,7 +111,18 @@ def shop_detail(request, shop_id):
     
 #     return render(request, 'home/shop_detail.html', {'shop': shop})
 
-def crmbackend(request):
+
+def data_entry(request, shop_id):
+    print(shop_id)
+    shop_data = request.session.get('shop_data', [])
+    shop_name = None
+    for item in shop_data:
+        if item['id'] == shop_id:
+            shop_name = item['name']
+            break
+
+    shop = get_object_or_404(CRMbackend, AutoId=shop_id)  # Corrected primary key
+
     if request.method == 'POST':
         form = CRMbackendForm(request.POST)
         if form.is_valid():
@@ -119,8 +130,18 @@ def crmbackend(request):
             return redirect('success_url')  # replace 'success_url' with your actual success URL
     else:
         form = CRMbackendForm()
+
+    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name})
+# def crmbackend(request):
+#     if request.method == 'POST':
+#         form = CRMbackendForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('success_url')  # replace 'success_url' with your actual success URL
+#     else:
+#         form = CRMbackendForm()
     
-    return render(request, 'home/data-entry.html', {'form': form}) 
+#     return render(request, 'home/data-entry.html', {'form': form}) 
 
 def crmbackend_data(request):
     if request.method == 'GET':

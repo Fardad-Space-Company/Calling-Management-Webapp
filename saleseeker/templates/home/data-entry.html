@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Business Form{% endblock %}
+{% block title %}Data Entry for {{ shop_name }}{% endblock %}
 
 {% block stylesheets %}
 <style>
@@ -76,6 +76,7 @@
 
 {% block content %}
 <div class="form-container">
+    <h1>Data Entry for {{ shop_name }}</h1> <!-- Displaying the shop name -->
     <form method="post">
         {% csrf_token %}
         
