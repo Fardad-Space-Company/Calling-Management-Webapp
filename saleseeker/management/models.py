@@ -36,7 +36,6 @@ class Postcode(models.Model):
 
 class CRMbackend(models.Model):
     DEAL_STATUS_CHOICES = [
-        ('deal', 'Deal'),
         ('hang_up', 'Hang Up'),
         ('not_interested', 'Not Interested'),
         ('gate_keeper', 'Gate Keeper'),
@@ -56,7 +55,7 @@ class CRMbackend(models.Model):
         ('no_answer', 'No Answer'),
     ]
     EmployeeID = models.CharField(max_length=11, null=False)
-    DealStatus = models.CharField(max_length=20, choices=DEAL_STATUS_CHOICES, null=False)
+    DealStatus = models.CharField(max_length=20, choices=DEAL_STATUS_CHOICES, default='hang_up', null=False)
     ShopName = models.CharField(max_length=100, null=False)
     Date = models.TextField(null=False)
     CallDuration = models.TextField(null=True, blank=True)
@@ -67,7 +66,7 @@ class CRMbackend(models.Model):
     GKname = models.CharField(max_length=20, null=True, blank=True)
     GKnum = models.CharField(max_length=15, null=True, blank=True)
     Note = models.TextField(null=True, blank=True)
-    Shop_Status = models.CharField(max_length=20, choices=SHOP_STATUS_CHOICES, null=False)
+    Shop_Status = models.CharField(max_length=20, choices=SHOP_STATUS_CHOICES, default='junk_lead', null=False)
     AutoId = models.AutoField(primary_key=True)
 
     class Meta:
