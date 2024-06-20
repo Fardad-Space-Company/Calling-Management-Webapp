@@ -1,0 +1,100 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Call History for {{ shop_name }}{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .pagination {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+    .page-info {
+        margin: 0 20px;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <h2>Call History for {{ shop_name }}</h2>
+    <table class="table" id="callHistoryTable">
+        <thead>
+            <tr>
+                <th>Call ID</th>
+                <th>Caller</th>
+                <th>Receiver</th>
+                <th>Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+    <div class="pagination">
+        <button class="btn btn-primary" id="prevBtn" disabled>Previous</button>
+        <span class="page-info" id="pageInfo">Page 1 of 1</span>
+        <button class="btn btn-primary" id="nextBtn">Next</button>
+    </div>
+</div>
+
+<script>
+    // Sample data for demonstration
+    const data = [
+        {id: 1, caller: 'Alice', receiver: 'Bob', time: '10:00 AM'},
+        {id: 2, caller: 'Charlie', receiver: 'Dave', time: '10:30 AM'},
+        {id: 3, caller: 'Eve', receiver: 'Frank', time: '11:00 AM'},
+        {id: 4, caller: 'Grace', receiver: 'Heidi', time: '11:30 AM'},
+        {id: 5, caller: 'Ivan', receiver: 'Judy', time: '12:00 PM'},
+        {id: 6, caller: 'Mallory', receiver: 'Oscar', time: '12:30 PM'},
+        // Add more data as needed
+    ];
+
+    const rowsPerPage =6;
+    let currentPage = 1;
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+
+    function renderTable(page) {
+        const tableBody = document.querySelector('#callHistoryTable tbody');
+        tableBody.innerHTML = '';
+
+        const start = (page - 1) * rowsPerPage;
+        const end = page * rowsPerPage;
+        const paginatedData = data.slice(start, end);
+
+        paginatedData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${row.id}</td>
+                <td>${row.caller}</td>
+                <td>${row.receiver}</td>
+                <td>${row.time}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+
+        document.getElementById('prevBtn').disabled = page === 1;
+        document.getElementById('nextBtn').disabled = end >= data.length;
+
+        document.getElementById('pageInfo').textContent = `Page ${page} of ${totalPages}`;
+    }
+
+    document.getElementById('prevBtn').addEventListener('click', function() {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTable(currentPage);
+        }
+    });
+
+    document.getElementById('nextBtn').addEventListener('click', function() {
+        if (currentPage * rowsPerPage < data.length) {
+            currentPage++;
+            renderTable(currentPage);
+        }
+    });
+
+    // Initial render
+    renderTable(currentPage);
+</script>
+{% endblock content %}

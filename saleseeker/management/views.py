@@ -154,3 +154,9 @@ def crmbackend_data(request):
     else:
         # Handle other HTTP methods if needed
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    
+    
+def call_history(request):
+    return render(request, 'home/call-history.html')
+    
