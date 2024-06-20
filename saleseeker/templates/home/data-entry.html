@@ -6,31 +6,36 @@
 <style>
     .form-container {
         background-color: #ffffff;
-        padding: 30px; /* Increased padding for better spacing */
+        padding: 40px;
         border-radius: 8px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Slightly deeper shadow for a more pronounced effect */
-        width: 95%; /* Slightly wider to use more of the viewport */
-        max-width: 800px; /* Increased max width */
-        margin: 20px auto; /* Reduced top and bottom margin for better space usage */
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        width: 80%;
+        max-width: 800px;
+        margin: 20px auto;
         box-sizing: border-box;
     }
 
     .section {
-        background-color: #f9f9f9;
-        padding: 25px; /* Increased padding within each section for better readability */
-        margin-bottom: 25px; /* Increased margin for more distinct section separation */
-        border-radius: 5px;
-        box-shadow: inset 0 0 15px rgba(0,0,0,0.05); /* Subtle change in shadow for depth */
+        margin-bottom: 40px; /* Increased margin between sections */
     }
 
     h2 {
-        font-size: 20px; /* Slightly larger font size for headings */
+        font-size: 22px;
         color: #333;
-        margin-bottom: 20px; /* Increased space after headings */
+        margin-bottom: 30px; /* Increased space below section titles */
     }
 
     .form-group {
-        margin-bottom: 20px; /* Increased margin for more space between inputs */
+        position: relative;
+        padding-bottom: 10px; /* Space at bottom inside each form-group */
+        margin-bottom: 20px; /* Space between each form-group */
+    }
+
+    .form-group label {
+        font-size: 16px;
+        color: #666;
+        display: block;
+        margin-bottom: 8px;
     }
 
     input[type="text"],
@@ -39,97 +44,94 @@
     input[type="date"],
     textarea {
         width: 100%;
-        padding: 12px; /* Increased padding for better user interaction */
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background-color: #fff;
+        padding: 10px 0; /* Padding adjusted for a flat style */
+        border: none;
+        border-bottom: 1px solid #ccc; /* Single line at the bottom of each input */
+        background-color: transparent;
+        font-size: 16px;
+        outline: none; /* Remove default focus outline */
     }
 
-    textarea {
-        height: 120px; /* Adjusted for more text input space */
-        resize: vertical; /* Ensuring resize is only vertical */
+    input:focus,
+    textarea:focus {
+        border-bottom: 2px solid #800080; /* Purple underline on focus */
     }
 
     button {
-        padding: 12px 30px; /* More padding for a more substantial button */
+        padding: 12px 30px;
         background-color: #007bff;
         color: white;
+        border: none;
         border-radius: 4px;
         display: block;
-        margin: 25px auto; /* More margin above the button, centered */
-        width: auto;
+        margin: 30px auto 0;
+        font-weight: bold;
     }
 
     button:hover {
-        background-color: #0056b3; /* Darker shade on hover for better interaction feedback */
+        background-color: #0056b3;
     }
 </style>
 
-
-
 {% endblock stylesheets %}
-
 {% block content %}
 <div class="form-container">
     <form>
         <!-- Shop Information Section -->
         <div class="section">
             <h2>Shop Information</h2>
-            <div class="form-group">
-                <label for="shopName">Shop Name:</label>
-                <input type="text" id="shopName" name="shopName" placeholder="Enter shop name">
+            <div class="form-group floating-label">
+                <input type="text" id="shopName" name="shopName" placeholder=" " required>
+                <label for="shopName">Shop Name</label>
             </div>
-            <div class="form-group">
-                <label for="shopStatus">Shop Status:</label>
-                <input type="text" id="shopStatus" name="shopStatus" placeholder="Active, Closed, etc.">
+            <div class="form-group floating-label">
+                <input type="text" id="shopStatus" name="shopStatus" placeholder=" " required>
+                <label for="shopStatus">Shop Status</label>
             </div>
         </div>
 
         <!-- Client Information Section -->
         <div class="section">
             <h2>Client Information</h2>
-            <div class="form-group">
-                <label for="shopClient">Shop Client:</label>
-                <input type="text" id="shopClient" name="shopClient" placeholder="Client's name">
+            <div class="form-group floating-label">
+                <input type="text" id="shopClient" name="shopClient" placeholder=" " required>
+                <label for="shopClient">Shop Client</label>
             </div>
-            <div class="form-group">
-                <label for="clientPhone">Shop Client Phone Number:</label>
-                <input type="tel" id="clientPhone" name="clientPhone" placeholder="E.g., +447500000000">
+            <div class="form-group floating-label">
+                <input type="tel" id="clientPhone" name="clientPhone" placeholder=" " required>
+                <label for="clientPhone">Shop Client Phone Number</label>
             </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" placeholder="example@domain.com">
+            <div class="form-group floating-label">
+                <input type="email" id="email" name="email" placeholder=" " required>
+                <label for="email">Email</label>
             </div>
         </div>
 
         <!-- Staff Information Section -->
         <div class="section">
             <h2>Staff Information</h2>
-            <div class="form-group">
-                <label for="staff">Staff:</label>
-                <input type="text" id="staff" name="staff" placeholder="Staff member's name">
+            <div class="form-group floating-label">
+                <input type="text" id="staff" name="staff" placeholder=" " required>
+                <label for="staff">Staff</label>
             </div>
-            <div class="form-group">
-                <label for="staffPhone">Staff Phone Number:</label>
-                <input type="tel" id="staffPhone" name="staffPhone" placeholder="E.g., +447500000000">
+            <div class="form-group floating-label">
+                <input type="tel" id="staffPhone" name="staffPhone" placeholder=" " required>
+                <label for="staffPhone">Staff Phone Number</label>
             </div>
         </div>
 
         <!-- Miscellaneous Details Section -->
         <div class="section">
             <h2>Miscellaneous Details</h2>
-            <div class="form-group">
-                <label for="dealStatus">Deal Status:</label>
-                <input type="text" id="dealStatus" name="dealStatus" placeholder="Pending, Completed, etc.">
+            <div class="form-group floating-label">
+                <input type="text" id="dealStatus" name="dealStatus" placeholder=" " required>
+                <label for="dealStatus">Deal Status</label>
             </div>
-            <div class="form-group">
-                <label for="note">Note:</label>
-                <textarea id="note" name="note" placeholder="Additional notes"></textarea>
+            <div class="form-group floating-label">
+                <textarea id="note" name="note" placeholder=" " required></textarea>
+                <label for="note">Note</label>
             </div>
-            <div class="form-group">
-                <label for="calendar">Calendar:</label>
-                <input type="date" id="calendar" name="calendar">
-            </div>
+            
         </div>
 
         <!-- Form Submission Button -->
