@@ -1,11 +1,13 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import ShopInfoUnique4, Postcode, CRMbackend
+from .models import ShopInfoUnique4, Postcode, CRMbackend, EmployeeID
 from django.http import JsonResponse
 import requests
 import datetime
 from django.http import Http404
 from .forms import CRMbackendForm
+from django.utils import timezone
+from django.contrib import messages
 
 # @login_required
 def management(request):
@@ -59,7 +61,7 @@ def chooseshop(request):
 
     # Print the day name
     day_name = today.strftime("%A")
-    print(day_name)
+    # print(day_name)
     try:
         url = f"http://198.244.148.241:5000/shops/{city}/{postcode}/{day_name}"
         response = requests.get(url)
@@ -115,23 +117,55 @@ def shop_detail(request, shop_id):
 def data_entry(request, shop_id):
     print(shop_id)
     shop_data = request.session.get('shop_data', [])
+    print('Session shop_data:', shop_data)  # Debugging print
     shop_name = None
+    
+    # Find the shop name from the session data
     for item in shop_data:
         if item['id'] == shop_id:
             shop_name = item['name']
+            print(shop_name)
             break
+    
+    if not shop_name:
+        messages.error(request, 'Shop name not found in session data.')
+        return redirect('error_url')  # replace 'error_url' with your actual error URL
 
-    shop = get_object_or_404(CRMbackend, AutoId=shop_id)  # Corrected primary key
+    try:
+        # Fetch the shop object or raise Http404 if not found
+        shop = CRMbackend.objects.get(AutoId=shop_id)
+    except CRMbackend.DoesNotExist:
+        shop = None
+        messages.error(request, 'Shop data not found in CRM backend.')
+        # return redirect('error_url')  # Handle the case where shop data is not found
 
     if request.method == 'POST':
-        form = CRMbackendForm(request.POST)
+        form = CRMbackendForm(request.POST, instance=shop)
         if form.is_valid():
-            form.save()
-            return redirect('success_url')  # replace 'success_url' with your actual success URL
-    else:
-        form = CRMbackendForm()
+            # Do not commit yet, we will set additional fields first
+            crm_instance = form.save(commit=False)
+            crm_instance.ShopName = shop_name
 
-    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name})
+            # Fetch the employee_id of the logged-in user
+            try:
+                employee = EmployeeID.objects.get(user=request.user)
+                crm_instance.EmployeeID = employee.employee_id
+            except EmployeeID.DoesNotExist:
+                messages.error(request, 'Employee ID not found for the logged-in user.')
+                return redirect('error_url')  # replace 'error_url' with your actual error URL
+
+            crm_instance.Date = timezone.now().strftime('%Y-%m-%d %H:%M:%S')  # setting current date and time
+            print(crm_instance.Date)
+            crm_instance.save()
+            messages.success(request, 'Data entry saved successfully.')
+            return redirect('table_list')  # replace 'success_url' with your actual success URL
+        else:
+            messages.error(request, 'There was an error with the form. Please check the data and try again.')
+    else:
+        form = CRMbackendForm(instance=shop)
+
+    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name, 'shop_id': shop_id})
+
 # def crmbackend(request):
 #     if request.method == 'POST':
 #         form = CRMbackendForm(request.POST)
@@ -149,7 +183,7 @@ def crmbackend_data(request):
         data = {
             'crm_data': crm_data,
         }
-        print(data)
+        # print(data)
         return JsonResponse(data)
     else:
         # Handle other HTTP methods if needed
@@ -160,3 +194,7 @@ def crmbackend_data(request):
 def call_history(request):
     return render(request, 'home/call-history.html')
     
+    
+
+def errorhandling(request):
+    return render(request, 'home/page-500.html')
