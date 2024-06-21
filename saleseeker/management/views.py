@@ -198,23 +198,33 @@ logger = logging.getLogger(__name__)
 
 def call_history(request):
     try:
-        # Default values for pagination
+        # Default values for pagination and sorting
         page_number = request.GET.get('page', 1)
         rows_per_page = 15
-        
+        shop_name_filter = request.GET.get('shop_name', '')
+        sort_by = request.GET.get('sort_by', 'Date')
+        sort_order = request.GET.get('sort_order', 'desc')
+
         try:
             page_number = int(page_number)
             if page_number < 1:
                 page_number = 1
         except ValueError:
             page_number = 1
-        
-        # Fetch call history data from CRMbackend model, ordered by Date descending
-        call_history_entries = CRMbackend.objects.order_by('-Date')
+
+        # Define sorting
+        if sort_order == 'desc':
+            sort_by = '-' + sort_by
+
+        # Fetch call history data from CRMbackend model with optional filter and sorting
+        if shop_name_filter:
+            call_history_entries = CRMbackend.objects.filter(ShopName__icontains=shop_name_filter).order_by(sort_by)
+        else:
+            call_history_entries = CRMbackend.objects.order_by(sort_by)
         
         # Paginate the queryset
         paginator = Paginator(call_history_entries, rows_per_page)
-        
+
         try:
             crm_data = paginator.page(page_number)
         except EmptyPage:
@@ -223,15 +233,17 @@ def call_history(request):
         except PageNotAnInteger:
             logger.warning(f"Invalid page number '{page_number}' received. Returning the first page.")
             crm_data = paginator.page(1)  # Return first page
-        
+
         # Prepare context data for rendering the template
         context = {
             'crm_data': crm_data,
             'total_pages': paginator.num_pages,
             'current_page': crm_data.number,
-            'shop_name': 'Your Shop Name',  # Replace with actual shop name or fetch dynamically
+            'shop_name': shop_name_filter,
+            'sort_by': sort_by.lstrip('-'),
+            'sort_order': 'asc' if sort_order == 'desc' else 'desc',
         }
-        
+
         return render(request, 'home/call-history.html', context)
     
     except Exception as e:
