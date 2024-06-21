@@ -88,8 +88,7 @@ class EmployeeID(models.Model):
     # Add other fields as needed
 
     def __str__(self):
-        return self.employee_id  # Display the employee_id as the representation
-
+        return self.employee_id 
 
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

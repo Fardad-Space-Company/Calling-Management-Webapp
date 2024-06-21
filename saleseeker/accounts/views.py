@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from .forms import ImageUploadForm , CustomPasswordChangeForm
+from .forms import ImageUploadForm 
 
 # Create your views here.
 def custom_login(request):

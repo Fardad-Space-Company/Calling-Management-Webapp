@@ -55,7 +55,7 @@
         <tbody>
             {% for entry in crm_data %}
             <tr>
-                <td>{{ entry.EmployeeID }}</td>
+                <td>{{ entry.user.username }}</td>
                 <td>{{ entry.ShopName }}</td>
                 <td>{{ entry.Date }}</td>
                 <td>{{ entry.DealStatus }}</td>
