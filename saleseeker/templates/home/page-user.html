@@ -14,25 +14,6 @@
     display: block;
     margin: 20px auto; /* Centers the image in the div */
   }
-
-  .card-dark {
-    background-color: #343a40; /* Darker background color */
-    color: white; /* Ensure text is readable on dark background */
-  }
-
-  .card-dark .form-control {
-    background-color: #495057; /* Slightly lighter dark background for form controls */
-    color: white;
-  }
-
-  .card-dark .form-control::placeholder {
-    color: #ced4da; /* Placeholder text color */
-  }
-
-  .card-dark .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
 </style>
 {% endblock stylesheets %}
 
@@ -41,11 +22,22 @@
     <div class="row">
         <!-- User Information Section -->
         <div class="col-md-8">
-            <div class="card card-dark">
+            <div class="card">
                 <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST">
                         {% csrf_token %}
-                        {{ form.as_p }}
+                        <div class="form-group">
+                            <label class="bmd-label-floating">Username</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_email" class="bmd-label-floating">Email</label>
+                            <input type="email" id="id_email" name="email" class="form-control" value="{{ user.email }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="id_rule" class="bmd-label-floating">Rule (Optional)</label>
+                            <input type="text" id="id_rule" name="rule" class="form-control">
+                        </div>
                         <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
                     </form>
                 </div>
@@ -54,8 +46,15 @@
 
         <!-- Image Section -->
         <div class="col-md-4">
-            <div class="card card-profile card-dark text-center">
+            <div class="card card-profile text-center">
                 <div class="profile-image-container" style="background-image: url('{{ user.profile.image.url|default:'/static/assets/img/faces/default.jpg' }}');"></div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="file" name="image" class="form-control" style="margin-bottom: 10px;">
+                        <button type="submit" class="btn btn-primary btn-round">Upload New Image</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
