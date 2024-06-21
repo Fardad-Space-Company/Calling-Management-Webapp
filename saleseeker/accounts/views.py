@@ -3,15 +3,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-<<<<<<< HEAD
-from django.contrib.auth.models import User
-from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth import update_session_auth_hash
-from .forms import ImageUploadForm 
-=======
 from .forms import ProfileUpdateForm
 from .models import Profile
->>>>>>> 2075b23f689b70b56a44b36928b930c1b20c4b7e
 
 # Create your views here.
 def custom_login(request):
