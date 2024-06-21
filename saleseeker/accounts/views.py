@@ -6,7 +6,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-from .forms import ImageUploadForm , CustomPasswordChangeForm
+from .forms import ImageUploadForm 
 
 # Create your views here.
 def custom_login(request):
@@ -40,20 +40,23 @@ def custom_logout(request):
 
 # @login_required
 
-
 def profile(request):
     if request.method == 'POST':
-        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
-        if password_form.is_valid():
-            user = password_form.save()
-            update_session_auth_hash(request, user)  # Important for keeping the user logged in after password change
-            messages.success(request, 'Your password was successfully updated!')
+        # Handle profile update form
+        form = ImageUploadForm(request.POST, request.FILES, instance=request.user.profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your profile was successfully updated!')
             return redirect('profile')
         else:
             messages.error(request, 'Please correct the error below.')
     else:
-        password_form = CustomPasswordChangeForm(user=request.user)
+        # Initialize the form with the user's current profile data
+        form = ImageUploadForm(instance=request.user.profile)
 
-    return render(request, 'home/page-user.html', {'password_form': password_form})
+    context = {
+        'user': request.user,
+        'form': form
+    }
 
-
+    return render(request, 'home/page-user.html', context)
