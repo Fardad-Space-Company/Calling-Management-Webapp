@@ -159,7 +159,7 @@ def data_entry(request, shop_id):
                 messages.error(request, 'Employee ID not found for the logged-in user.')
                 return redirect('error_url')  # replace 'error_url' with your actual error URL
 
-            crm_instance.Date = timezone.now().strftime('%Y-%m-%d %H:%M:%S')  # setting current date and time
+            crm_instance.Date = timezone.now().strftime('%Y-%m-%d')   # setting current date and time
             print(crm_instance.Date)
             crm_instance.save()
             messages.success(request, 'Data entry saved successfully.')
