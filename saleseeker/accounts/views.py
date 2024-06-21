@@ -3,10 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+<<<<<<< HEAD
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from .forms import ImageUploadForm 
+=======
+from .forms import ProfileUpdateForm
+from .models import Profile
+>>>>>>> 2075b23f689b70b56a44b36928b930c1b20c4b7e
 
 # Create your views here.
 def custom_login(request):
@@ -40,20 +45,62 @@ def custom_logout(request):
 
 # @login_required
 
+# def profile(request):
+#     if request.method == 'POST':
+#         # Handle profile update form
+#         form = ImageUploadForm(request.POST, request.FILES, instance=request.user.profile)
+#         if form.is_valid():
+#             form.save()
+#             messages.success(request, 'Your profile was successfully updated!')
+#             return redirect('profile')
+#         else:
+#             messages.error(request, 'Please correct the error below.')
+#     else:
+#         # Initialize the form with the user's current profile data
+#         form = ImageUploadForm(instance=request.user.profile)
+
+#     context = {
+#         'user': request.user,
+#         'form': form
+#     }
+
+#     return render(request, 'home/page-user.html', context)
+
 
 def profile(request):
+    profile, created =  Profile.objects.get_or_create(user=request.user)
     if request.method == 'POST':
-        password_form = CustomPasswordChangeForm(user=request.user, data=request.POST)
-        if password_form.is_valid():
-            user = password_form.save()
-            update_session_auth_hash(request, user)  # Important for keeping the user logged in after password change
-            messages.success(request, 'Your password was successfully updated!')
+        form = ProfileUpdateForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            profile.user.email = form.cleaned_data['email']
+            profile.user.save()
             return redirect('profile')
-        else:
-            messages.error(request, 'Please correct the error below.')
     else:
-        password_form = CustomPasswordChangeForm(user=request.user)
+        form = ProfileUpdateForm(instance=profile)
+    return render(request, 'home/page-user.html', {'form': form})
 
-    return render(request, 'home/page-user.html', {'password_form': password_form})
 
 
+# def update_profile(request):
+#     try:
+#         user_profile = request.user.profile
+#     except Profile.DoesNotExist:
+#         user_profile = Profile.objects.create(user=request.user)
+
+#     if request.method == 'POST':
+#         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=user_profile, user=request.user)
+#         if p_form.is_valid():
+#             p_form.save()
+#             messages.success(request, 'Your profile has been updated!')
+#             return redirect('profile')
+#         else:
+#             messages.error(request, 'Please correct the error below.')
+#     else:
+#         p_form = ProfileUpdateForm(instance=user_profile, user=request.user)
+
+#     context = {
+#         'p_form': p_form
+#     }
+
+#     return render(request, 'home/page-user.html', context)
