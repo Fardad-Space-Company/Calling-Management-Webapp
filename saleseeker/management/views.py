@@ -8,6 +8,10 @@ from django.http import Http404
 from .forms import CRMbackendForm
 from django.utils import timezone
 from django.contrib import messages
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import logging
 
 # @login_required
 def management(request):
@@ -67,6 +71,7 @@ def chooseshop(request):
         response = requests.get(url)
         response.raise_for_status()  # Raise an HTTPError for bad responses
         shop_data = response.json()
+        print(shop_data)
 
         shops = [
             {
@@ -189,11 +194,49 @@ def crmbackend_data(request):
         # Handle other HTTP methods if needed
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
-    
-    
+logger = logging.getLogger(__name__)
+
 def call_history(request):
-    return render(request, 'home/call-history.html')
+    try:
+        # Default values for pagination
+        page_number = request.GET.get('page', 1)
+        rows_per_page = 15
+        
+        try:
+            page_number = int(page_number)
+            if page_number < 1:
+                page_number = 1
+        except ValueError:
+            page_number = 1
+        
+        # Fetch call history data from CRMbackend model, ordered by Date descending
+        call_history_entries = CRMbackend.objects.order_by('-Date')
+        
+        # Paginate the queryset
+        paginator = Paginator(call_history_entries, rows_per_page)
+        
+        try:
+            crm_data = paginator.page(page_number)
+        except EmptyPage:
+            logger.warning(f"Requested page {page_number} is out of range. Returning the last page.")
+            crm_data = paginator.page(paginator.num_pages)  # Return last page
+        except PageNotAnInteger:
+            logger.warning(f"Invalid page number '{page_number}' received. Returning the first page.")
+            crm_data = paginator.page(1)  # Return first page
+        
+        # Prepare context data for rendering the template
+        context = {
+            'crm_data': crm_data,
+            'total_pages': paginator.num_pages,
+            'current_page': crm_data.number,
+            'shop_name': 'Your Shop Name',  # Replace with actual shop name or fetch dynamically
+        }
+        
+        return render(request, 'home/call-history.html', context)
     
+    except Exception as e:
+        logger.error(f"Error occurred in call_history view: {str(e)}")
+        return render(request, 'home/call-history.html', {'error': 'Internal Server Error'})
     
 
 def errorhandling(request):
