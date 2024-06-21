@@ -1,5 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
+from django.conf import settings
+from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class ShopInfoUnique4(models.Model):
@@ -75,9 +80,28 @@ class CRMbackend(models.Model):
         db_table = 'CRMbackend'
 
 
-# class CustomUser(AbstractUser):
-#     employee_id = models.CharField(max_length=11, default='ADMIN')
-#     # Add any other custom fields you need
 
-#     def __str__(self):
-#         return self.username  # You can choose a different field if preferred
+
+class EmployeeID(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    employee_id = models.CharField(max_length=20, unique=True)
+    # Add other fields as needed
+
+    def __str__(self):
+        return self.employee_id 
+
+
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_or_update_employee_id(sender, instance, created, **kwargs):
+    if created:
+        # Generate a unique employee_id, for example based on username
+        employee_id = f'{instance.username}_empid'
+        while EmployeeID.objects.filter(employee_id=employee_id).exists():
+            # If employee_id already exists, modify it slightly
+            employee_id = f'{instance.username}_empid_{EmployeeID.objects.count() + 1}'
+        
+        # Create the EmployeeID instance
+        EmployeeID.objects.create(user=instance, employee_id=employee_id)
+    else:
+        # Update the existing EmployeeID instance
+        instance.employeeid.save()

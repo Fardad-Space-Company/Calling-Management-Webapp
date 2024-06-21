@@ -77,12 +77,33 @@
         background-color: #0056b3;
     }
     
+    .messages {
+        margin: 20px auto;
+        max-width: 800px;
+        padding: 10px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .messages .error {
+        border-color: #f5c6cb;
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+    .messages .success {
+        border-color: #c3e6cb;
+        background-color: #d4edda;
+        color: #155724;
+    }
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
 <div class="form-container">
-    <h1>Data Entry for {{ shop_name }}</h1> <!-- Displaying the shop name -->
+    <h1>Data Entry for {{ shop_name }}</h1>
+
+
     <form method="post">
         {% csrf_token %}
         
@@ -115,11 +136,10 @@
         <!-- Appointment Information Section -->
         <div class="section">
             <h2>Appointment Information</h2>
-            <form>
-                <label for="appointment-date"></label>
-                <input type="date" id="appointment-date" name="appointment-date">
-                <br><br>
-            </form>
+            <div class="form-group floating-label">
+                {{ form.Appointement_Date.label_tag }}
+                {{ form.Appointement_Date }}
+            </div>
         </div>
 
         <!-- Owner Information Section -->
@@ -164,5 +184,13 @@
         <!-- Form Submission Button -->
         <button type="submit">Submit Form</button>
     </form>
+    {% if shop %}
+    <div class="section">
+        <h2>Shop Information</h2>
+        <p>Shop Name: {{ shop.ShopName }}</p>
+        <p>Shop Status: {{ shop.get_Shop_Status_display }}</p>
+        <!-- Add more fields as needed -->
+    </div>
+    {% endif %}
 </div>
 {% endblock content %}

@@ -1,11 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import ShopInfoUnique4, Postcode, CRMbackend
+from .models import ShopInfoUnique4, Postcode, CRMbackend, EmployeeID
 from django.http import JsonResponse
 import requests
 import datetime
 from django.http import Http404
 from .forms import CRMbackendForm
+from django.utils import timezone
+from django.contrib import messages
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+import logging
 
 # @login_required
 def management(request):
@@ -59,12 +65,13 @@ def chooseshop(request):
 
     # Print the day name
     day_name = today.strftime("%A")
-    print(day_name)
+    # print(day_name)
     try:
         url = f"http://198.244.148.241:5000/shops/{city}/{postcode}/{day_name}"
         response = requests.get(url)
         response.raise_for_status()  # Raise an HTTPError for bad responses
         shop_data = response.json()
+        print(shop_data)
 
         shops = [
             {
@@ -115,23 +122,55 @@ def shop_detail(request, shop_id):
 def data_entry(request, shop_id):
     print(shop_id)
     shop_data = request.session.get('shop_data', [])
+    print('Session shop_data:', shop_data)  # Debugging print
     shop_name = None
+    
+    # Find the shop name from the session data
     for item in shop_data:
         if item['id'] == shop_id:
             shop_name = item['name']
+            print(shop_name)
             break
+    
+    if not shop_name:
+        messages.error(request, 'Shop name not found in session data.')
+        return redirect('error_url')  # replace 'error_url' with your actual error URL
 
-    shop = get_object_or_404(CRMbackend, AutoId=shop_id)  # Corrected primary key
+    try:
+        # Fetch the shop object or raise Http404 if not found
+        shop = CRMbackend.objects.get(AutoId=shop_id)
+    except CRMbackend.DoesNotExist:
+        shop = None
+        messages.error(request, 'Shop data not found in CRM backend.')
+        # return redirect('error_url')  # Handle the case where shop data is not found
 
     if request.method == 'POST':
-        form = CRMbackendForm(request.POST)
+        form = CRMbackendForm(request.POST, instance=shop)
         if form.is_valid():
-            form.save()
-            return redirect('success_url')  # replace 'success_url' with your actual success URL
-    else:
-        form = CRMbackendForm()
+            # Do not commit yet, we will set additional fields first
+            crm_instance = form.save(commit=False)
+            crm_instance.ShopName = shop_name
 
-    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name})
+            # Fetch the employee_id of the logged-in user
+            try:
+                employee = EmployeeID.objects.get(user=request.user)
+                crm_instance.EmployeeID = employee.employee_id
+            except EmployeeID.DoesNotExist:
+                messages.error(request, 'Employee ID not found for the logged-in user.')
+                return redirect('error_url')  # replace 'error_url' with your actual error URL
+
+            crm_instance.Date = timezone.now().strftime('%Y-%m-%d')   # setting current date and time
+            print(crm_instance.Date)
+            crm_instance.save()
+            messages.success(request, 'Data entry saved successfully.')
+            return redirect('table_list')  # replace 'success_url' with your actual success URL
+        else:
+            messages.error(request, 'There was an error with the form. Please check the data and try again.')
+    else:
+        form = CRMbackendForm(instance=shop)
+
+    return render(request, 'home/data-entry.html', {'form': form, 'shop': shop, 'shop_name': shop_name, 'shop_id': shop_id})
+
 # def crmbackend(request):
 #     if request.method == 'POST':
 #         form = CRMbackendForm(request.POST)
@@ -149,14 +188,68 @@ def crmbackend_data(request):
         data = {
             'crm_data': crm_data,
         }
-        print(data)
+        # print(data)
         return JsonResponse(data)
     else:
         # Handle other HTTP methods if needed
         return JsonResponse({'error': 'Method not allowed'}, status=405)
     
-    
-    
+logger = logging.getLogger(__name__)
+
 def call_history(request):
-    return render(request, 'home/call-history.html')
+    try:
+        # Default values for pagination and sorting
+        page_number = request.GET.get('page', 1)
+        rows_per_page = 15
+        shop_name_filter = request.GET.get('shop_name', '')
+        sort_by = request.GET.get('sort_by', 'Date')
+        sort_order = request.GET.get('sort_order', 'desc')
+
+        try:
+            page_number = int(page_number)
+            if page_number < 1:
+                page_number = 1
+        except ValueError:
+            page_number = 1
+
+        # Define sorting
+        if sort_order == 'desc':
+            sort_by = '-' + sort_by
+
+        # Fetch call history data from CRMbackend model with optional filter and sorting
+        if shop_name_filter:
+            call_history_entries = CRMbackend.objects.filter(ShopName__icontains=shop_name_filter).order_by(sort_by)
+        else:
+            call_history_entries = CRMbackend.objects.order_by(sort_by)
+        
+        # Paginate the queryset
+        paginator = Paginator(call_history_entries, rows_per_page)
+
+        try:
+            crm_data = paginator.page(page_number)
+        except EmptyPage:
+            logger.warning(f"Requested page {page_number} is out of range. Returning the last page.")
+            crm_data = paginator.page(paginator.num_pages)  # Return last page
+        except PageNotAnInteger:
+            logger.warning(f"Invalid page number '{page_number}' received. Returning the first page.")
+            crm_data = paginator.page(1)  # Return first page
+
+        # Prepare context data for rendering the template
+        context = {
+            'crm_data': crm_data,
+            'total_pages': paginator.num_pages,
+            'current_page': crm_data.number,
+            'shop_name': shop_name_filter,
+            'sort_by': sort_by.lstrip('-'),
+            'sort_order': 'asc' if sort_order == 'desc' else 'desc',
+        }
+
+        return render(request, 'home/call-history.html', context)
     
+    except Exception as e:
+        logger.error(f"Error occurred in call_history view: {str(e)}")
+        return render(request, 'home/call-history.html', {'error': 'Internal Server Error'})
+    
+
+def errorhandling(request):
+    return render(request, 'home/page-500.html')
