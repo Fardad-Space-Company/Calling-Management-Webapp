@@ -1,39 +1,41 @@
 {% extends "layouts/base.html" %}
 
-{% block title %} Page User {% endblock %} 
+{% block title %} Page User {% endblock %}
 
-<!-- Specific Page CSS goes HERE  -->
-{% block stylesheets %}{% endblock stylesheets %}
+{% block stylesheets %}
+<!-- Additional stylesheets -->
+{% endblock stylesheets %}
 
 {% block content %}
-<div class="row"> <!-- Added a row for better structure and alignment -->
-  <div class="col-md-3">
+<div class="row">
+  <div class="col-md-8">
     <div class="form-group">
       <label class="bmd-label-floating">Username</label>
-      <input type="text" class="form-control" value="{{ current_user.username }}">
+      <input type="text" class="form-control" value="{{ user.username }}" readonly>
     </div>
-  </div>
-  <div class="col-md-4">
     <div class="form-group">
       <label class="bmd-label-floating">Email address</label>
-      <input type="email" class="form-control" value="{{ current_user.email }}">
+      <input type="email" class="form-control" value="{{ user.email }}" readonly>
     </div>
-    <button type="submit" class="btn btn-primary pull-right">Update Profile</button>
-    <div class="clearfix"></div>
   </div>
   <div class="col-md-4">
     <div class="card card-profile">
-      <a href="#pablo">
-        <img class="img" src="/static/assets/img/faces/marc.jpg" />
-      </a>
-      <div class="card-body">
-        <h6 class="card-category text-gray">{{ current_user.username }}</h6>
-        <h4 class="card-title">{{ current_user.email }}</h4>
-        <!-- <a href="#pablo" class="btn btn-primary btn-round">Follow</a> -->
-      </div>
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+          <img class="img" src="{{ user.profile.image.url }}" alt="Profile image">
+        </a>
+        <div class="card-body">
+          <input type="file" name="image" class="form-control">
+          <button type="submit" class="btn btn-primary btn-round">Upload New Image</button>
+        </div>
+      </form>
     </div>
   </div>
 </div>
+
 {% endblock content %}
-<!-- Specific Page JS goes HERE  -->
-{% block javascripts %}{% endblock javascripts %}
+
+
+{% block javascripts %}
+<!-- Additional JavaScripts -->
+{% endblock javascripts %}
