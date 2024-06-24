@@ -36,7 +36,7 @@
                             <label for="id_rule" class="bmd-label-floating">Rule (Optional)</label>
                             <input type="text" id="id_rule" name="rule" class="form-control" value="{{ user.profile.rule }}">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
+                        <button type="submit" class="btn btn-primary btn-round" style="background-color: #f57c00; border-color: #f57c00;">Update Profile</button>
                     </form>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <form method="POST" action="" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="file" name="image" class="form-control" style="margin-bottom: 10px;">
-                        <button type="submit" class="btn btn-primary btn-round">Upload New Image</button>
+                        <button type="submit" class="btn btn-primary btn-round" style="background-color: #f57c00; border-color: #f57c00;" >Upload New Image</button>
                     </form>
                 </div>
             </div>
