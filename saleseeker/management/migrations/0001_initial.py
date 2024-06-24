@@ -14,7 +14,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CRMbackend',
             fields=[
-                ('EmployeeID', models.CharField(max_length=11)),
+                ('EmployeeID_id', models.CharField(max_length=11)),
                 ('DealStatus', models.CharField(choices=[('hang_up', 'Hang Up'), ('not_interested', 'Not Interested'), ('gate_keeper', 'Gate Keeper'), ('decision_maker', 'Decision Maker'), ('call_appointment', 'Call Appointment'), ('visit_appointment', 'Visit Appointment'), ('follow_up', 'Follow Up'), ('visited', 'Visited'), ('voice_mail', 'Voice Mail'), ('no_answer', 'No Answer')], default='hang_up', max_length=20)),
                 ('ShopName', models.CharField(max_length=100)),
                 ('Date', models.TextField()),
