@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .forms import ProfileUpdateForm
+from .forms import ProfileUpdateForm, ImageUploadForm
 from .models import Profile
 
 # Create your views here.
@@ -60,21 +60,36 @@ def custom_logout(request):
 #     return render(request, 'home/page-user.html', context)
 
 
+
+@login_required
 def profile(request):
-    profile, created =  Profile.objects.get_or_create(user=request.user)
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
     if request.method == 'POST':
-        form = ProfileUpdateForm(request.POST, instance=profile)
-        if form.is_valid():
-            form.save()
-            profile.user.email = form.cleaned_data['email']
+        profile_form = ProfileUpdateForm(request.POST, instance=profile)
+        image_form = ImageUploadForm(request.POST, request.FILES, instance=profile)
+
+        if profile_form.is_valid():
+            profile_form.save()
+            profile.user.email = profile_form.cleaned_data['email']
             profile.user.save()
+            messages.success(request, 'Your profile has been updated!')
             return redirect('profile')
+
+        if image_form.is_valid():
+            image_form.save()
+            messages.success(request, 'Your profile image has been updated!')
+            return redirect('profile')
+
     else:
-        form = ProfileUpdateForm(instance=profile)
-    return render(request, 'home/page-user.html', {'form': form})
+        profile_form = ProfileUpdateForm(instance=profile)
+        image_form = ImageUploadForm(instance=profile)
 
-
-
+    return render(request, 'home/page-user.html', {
+        'profile_form': profile_form,
+        'image_form': image_form,
+        'user': request.user
+    })
 # def update_profile(request):
 #     try:
 #         user_profile = request.user.profile

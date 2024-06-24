@@ -6,17 +6,19 @@
 {% block stylesheets %}
 <style>
   .container {
-    width: 100%;
-    margin: 20px auto;
+    width: 70%;
+    margin-right: 10px;
     padding: 20px;
-    background-color: #f4f4f4;
+    background-color: #ffffff;
     text-align: center;
+    border-radius: 2%;
   }
 
   .calendar th {
     background-color: #333;
     color: white;
     padding: 10px;
+    
   }
 
   .calendar td {
@@ -31,7 +33,28 @@
     margin-top: 20px; /* Adjust margin for separation */
     margin: 'left'; 
   }
+  @media (max-width: 768px) {
+    .container {
+        width: 90%;  /* Increase the container width on smaller screens */
+        padding: 10px;
+    }
 
+    .calendar th, .calendar td {
+        padding: 5px;  /* Reduce padding to fit content better */
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 100%;  /* Full width for very small screens */
+        padding: 5px;
+    }
+
+    .calendar th, .calendar td {
+        padding: 2px;  /* Further reduce padding for very small screens */
+        font-size: 12px;  /* Adjust font size for better readability */
+    }
+}
   .today {
     background-color: yellow;
     color: rgb(0, 0, 0);
