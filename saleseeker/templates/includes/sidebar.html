@@ -27,6 +27,12 @@
               <p>Table List</p>
             </a>
           </li>
+          <li class="nav-item {% if 'ui-tables' in segment %} active {% endif %}">
+            <a class="nav-link" href="{% url 'call-history' %}">
+             <i class="material-icons">history</i>
+              <p>Call Histioy</p>
+            </a>
+          </li>
           <li class="nav-item ">
             <a class="nav-link" href="{% url 'logout' %}" >
               <i class="material-icons">directions_run</i>
