@@ -2,7 +2,6 @@
 
 {% block title %} Dashboard {% endblock %}
 
-<!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}
 <style>
   .container {
@@ -18,7 +17,6 @@
     background-color: #333;
     color: white;
     padding: 10px;
-    
   }
 
   .calendar td {
@@ -30,40 +28,60 @@
   .calendar {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px; /* Adjust margin for separation */
-    margin: 'left'; 
+    margin-top: 20px;
+    margin: 'left';
   }
+
   @media (max-width: 768px) {
     .container {
-        width: 90%;  /* Increase the container width on smaller screens */
+        width: 90%;
         padding: 10px;
     }
 
     .calendar th, .calendar td {
-        padding: 5px;  /* Reduce padding to fit content better */
+        padding: 5px;
     }
-}
+  }
 
-@media (max-width: 480px) {
+  @media (max-width: 480px) {
     .container {
-        width: 100%;  /* Full width for very small screens */
+        width: 100%;
         padding: 5px;
     }
 
     .calendar th, .calendar td {
-        padding: 2px;  /* Further reduce padding for very small screens */
-        font-size: 12px;  /* Adjust font size for better readability */
+        padding: 2px;
+        font-size: 12px;
     }
-}
-  .today {
-    background-color: yellow;
-    color: rgb(0, 0, 0);
+  }
+
+.calendar .today {
+    background-color: #ffeb3b;
     font-weight: bold;
+
+  }
+  .month-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .month-navigation button {
+    background-color: #f57c00;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
   }
 </style>
 {% endblock stylesheets %}
-
-{% load static %}
 
 {% block content %}
 <div class="row">
@@ -146,6 +164,11 @@
         <div class="container">
           <div class="calendar-section">
             <h1>Events Calendar</h1>
+            <div class="month-navigation">
+              <button id="prevMonth">Previous Month</button>
+              <span id="currentMonth"></span>
+              <button id="nextMonth">Next Month</button>
+            </div>
             <table class="calendar">
               <thead>
                 <tr>
@@ -158,12 +181,8 @@
                   <th>Sat</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr><td></td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
-                <tr><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td><td>13</td></tr>
-                <tr><td>14</td><td>15</td><td>16</td><td>17</td><td>18</td><td>19</td><td>20</td></tr>
-                <tr><td>21</td><td>22</td><td>23</td><td>24</td><td>25</td><td>26</td><td>27</td></tr>
-                <tr><td>28</td><td>29</td><td>30</td><td>31</td><td></td><td></td><td></td></tr>
+              <tbody id="calendarBody">
+                <!-- Calendar rows will be inserted here by JavaScript -->
               </tbody>
             </table>
           </div>
@@ -175,25 +194,69 @@
 {% block javascripts %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    highlightToday();
-  });
-
-  function highlightToday() {
     const today = new Date();
-    const currentDay = today.getDate();
-    const currentMonth = today.getMonth(); // January is 0!
-    const currentYear = today.getFullYear();
+    let currentMonth = today.getMonth();
+    let currentYear = today.getFullYear();
 
-    const cells = document.querySelectorAll('.calendar td');
-    cells.forEach(function(cell) {
-      const cellDay = parseInt(cell.textContent.trim());
-      if (cellDay && cellDay === currentDay) {
-        const cellDate = new Date(currentYear, currentMonth, cellDay);
-        if (cellDate.getMonth() === currentMonth) {
-          cell.classList.add('today'); // Apply 'today' class style
+    const months = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"];
+
+    function renderCalendar(month, year) {
+      const calendarBody = document.getElementById('calendarBody');
+      const currentMonthSpan = document.getElementById('currentMonth');
+      calendarBody.innerHTML = ''; // Clear previous cells
+      currentMonthSpan.textContent = months[month] + ' ' + year;
+
+      const firstDay = (new Date(year, month)).getDay();
+      const daysInMonth = 32 - new Date(year, month, 32).getDate();
+
+      let date = 1;
+      for (let i = 0; i < 6; i++) {
+        const row = document.createElement('tr');
+
+        for (let j = 0; j < 7; j++) {
+          if (i === 0 && j < firstDay) {
+            const cell = document.createElement('td');
+            const cellText = document.createTextNode('');
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+          } else if (date > daysInMonth) {
+            break;
+          } else {
+            const cell = document.createElement('td');
+            const cellText = document.createTextNode(date);
+            cell.appendChild(cellText);
+            if (date === today.getDate() && year === today.getFullYear() && month === today.getMonth()) {
+              cell.classList.add('today');
+            }
+            row.appendChild(cell);
+            date++;
+          }
         }
+
+        calendarBody.appendChild(row);
       }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click', function() {
+      currentMonth--;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      }
+      renderCalendar(currentMonth, currentYear);
     });
-  }
+
+    document.getElementById('nextMonth').addEventListener('click', function() {
+      currentMonth++;
+      if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      renderCalendar(currentMonth, currentYear);
+    });
+
+    renderCalendar(currentMonth, currentYear);
+  });
 </script>
 {% endblock javascripts %}
