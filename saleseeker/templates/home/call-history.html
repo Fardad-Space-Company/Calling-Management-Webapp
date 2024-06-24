@@ -3,7 +3,6 @@
 {% block title %}Call History for Sale Team{% endblock %}
 
 {% block stylesheets %}
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <style>
     .pagination {
         display: flex;
@@ -23,14 +22,20 @@
     .text-danger {
         color: red; /* Adjust styling as needed */
     }
+    .form-group {
+        margin-right: 10px;
+    }
+    .form-group:last-child {
+        margin-right: 0;
+    }
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
 <div class="container">
     <h2>Call History for Sale Team</h2>
-    <form method="get" class="filter-form">
-        <div class="form-group">
+    <form method="get" class="filter-form row">
+        <div class="form-group col-md-6">
             <label for="shop_name">Filter by Shop Name:</label>
             <select name="shop_name" id="shop_name" class="form-control">
                 <option value="">-- Select Shop Name --</option>
@@ -41,7 +46,7 @@
                 {% endfor %}
             </select>
         </div>
-        <div class="form-group">
+        <div class="form-group col-md-4">
             <label for="employee_id">Filter by Employee ID:</label>
             <select name="employee_id" id="employee_id" class="form-control">
                 <option value="">-- Select Employee ID --</option>
@@ -52,7 +57,9 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Filter</button>
+        </div>
     </form>
     <table class="table" id="callHistoryTable">
         <thead>
@@ -112,8 +119,15 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
+        // Initialize Select2 for Shop Name dropdown
         $('#shop_name').select2({
             placeholder: '-- Select Shop Name --',
+            allowClear: true
+        });
+
+        // Initialize Select2 for Employee ID dropdown
+        $('#employee_id').select2({
+            placeholder: '-- Select Employee ID --',
             allowClear: true
         });
     });
