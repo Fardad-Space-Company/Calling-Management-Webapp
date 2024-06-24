@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import ShopInfoUnique4, Postcode, CRMbackend, EmployeeID
+from .models import  Postcode, CRMbackend, EmployeeID
 from django.http import JsonResponse
 import requests
 import datetime
@@ -196,12 +196,84 @@ def crmbackend_data(request):
     
 logger = logging.getLogger(__name__)
 
+# def call_history(request):
+#     try:
+#         # Default values for pagination and sorting
+#         page_number = request.GET.get('page', 1)
+#         rows_per_page = 15
+#         shop_name_filter = request.GET.get('shop_name', '')
+#         sort_by = request.GET.get('sort_by', 'Date')
+#         sort_order = request.GET.get('sort_order', 'desc')
+
+#         try:
+#             page_number = int(page_number)
+#             if page_number < 1:
+#                 page_number = 1
+#         except ValueError:
+#             page_number = 1
+
+#         # Define sorting
+#         if sort_order == 'desc':
+#             sort_by = '-' + sort_by
+
+#         # Fetch call history data from CRMbackend model with optional filter and sorting
+#         call_history_entries = CRMbackend.objects.all()
+#         call_history_entries2 = EmployeeID.objects.all()
+
+#         if shop_name_filter:
+#             call_history_entries = call_history_entries.filter(ShopName__icontains=shop_name_filter)
+
+#         call_history_entries = call_history_entries.order_by(sort_by)
+
+#         # Paginate the queryset
+#         paginator = Paginator(call_history_entries, rows_per_page)
+
+#         try:
+#             crm_data = paginator.page(page_number)
+#         except EmptyPage:
+#             logger.warning(f"Requested page {page_number} is out of range. Returning the last page.")
+#             crm_data = paginator.page(paginator.num_pages)  # Return last page
+#         except PageNotAnInteger:
+#             logger.warning(f"Invalid page number '{page_number}' received. Returning the first page.")
+#             crm_data = paginator.page(1)  # Return first page
+
+#         # Collect usernames for the crm_data entries
+#         entries_with_usernames = []
+#         for entry in call_history_entries2:
+#             print(entry.employee_id)
+#             username = get_username_by_employee_id(entry.employee_id)
+#             entry_data = {
+#                 'entry': entry,
+#                 'username': username
+#             }
+#             entries_with_usernames.append(entry_data)
+#         print(entries_with_usernames)
+
+#         # Prepare context data for rendering the template
+#         context = {
+#             'entries_with_usernames': entries_with_usernames,
+#             'total_pages': paginator.num_pages,
+#             'current_page': crm_data.number,
+#             'shop_name': shop_name_filter,
+#             'sort_by': sort_by.lstrip('-'),
+#             'sort_order': 'asc' if sort_order == 'desc' else 'desc',
+#         }
+
+#         return render(request, 'home/call-history.html', context)
+
+#     except Exception as e:
+#         logger.error(f"Error occurred in call_history view: {str(e)}")
+#         return render(request, 'home/call-history.html', {'error': 'Internal Server Error'})
+    
+logger = logging.getLogger(__name__)
+
 def call_history(request):
     try:
         # Default values for pagination and sorting
         page_number = request.GET.get('page', 1)
         rows_per_page = 15
         shop_name_filter = request.GET.get('shop_name', '')
+        employee_id_filter = request.GET.get('employee_id', '')
         sort_by = request.GET.get('sort_by', 'Date')
         sort_order = request.GET.get('sort_order', 'desc')
 
@@ -217,10 +289,12 @@ def call_history(request):
             sort_by = '-' + sort_by
 
         # Fetch call history data from CRMbackend model with optional filter and sorting
+        call_history_entries = CRMbackend.objects.all()
         if shop_name_filter:
-            call_history_entries = CRMbackend.objects.filter(ShopName__icontains=shop_name_filter).order_by(sort_by)
-        else:
-            call_history_entries = CRMbackend.objects.order_by(sort_by)
+            call_history_entries = call_history_entries.filter(ShopName__icontains=shop_name_filter)
+        if employee_id_filter:
+            call_history_entries = call_history_entries.filter(EmployeeID__employee_id=employee_id_filter)
+        call_history_entries = call_history_entries.order_by(sort_by)
         
         # Paginate the queryset
         paginator = Paginator(call_history_entries, rows_per_page)
@@ -234,22 +308,53 @@ def call_history(request):
             logger.warning(f"Invalid page number '{page_number}' received. Returning the first page.")
             crm_data = paginator.page(1)  # Return first page
 
+        # Fetch all shop names and employee IDs for the filters
+        all_shop_names = CRMbackend.objects.values_list('ShopName', flat=True).distinct()
+        all_employee_ids = EmployeeID.objects.all()
+
         # Prepare context data for rendering the template
         context = {
             'crm_data': crm_data,
             'total_pages': paginator.num_pages,
             'current_page': crm_data.number,
             'shop_name': shop_name_filter,
+            'employee_id': employee_id_filter,
             'sort_by': sort_by.lstrip('-'),
             'sort_order': 'asc' if sort_order == 'desc' else 'desc',
+            'all_shop_names': all_shop_names,
+            'all_employee_ids': all_employee_ids,
         }
 
         return render(request, 'home/call-history.html', context)
-    
+
     except Exception as e:
         logger.error(f"Error occurred in call_history view: {str(e)}")
         return render(request, 'home/call-history.html', {'error': 'Internal Server Error'})
+
+
+
+# def get_username_by_employee_id(request, employeeID):
+#     try:
+#         employee_obj = EmployeeID.objects.get(employee_id=employeeID)
+#         username = employee_obj.user.username
+#     except EmployeeID.DoesNotExist:
+#         logger.warning(f"EmployeeID with ID {employeeID} does not exist.")
+#         username = 'Unknown'
+#     except Exception as e:
+#         logger.error(f"Error occurred while fetching username for EmployeeID {employeeID}: {str(e)}")
+#         username = 'Unknown'
     
+#     return JsonResponse({'username': username})
+def get_username_by_employee_id(request, employee_id):
+    try:
+        employee_obj = get_object_or_404(EmployeeID, employee_id=employee_id)
+        username = employee_obj.user.username
+        return JsonResponse({'username': username})
+    except Exception as e:
+        logger.error(f"Error occurred while fetching username for EmployeeID {employee_id}: {str(e)}")
+        return JsonResponse({'username': 'Unknown'}, status=500)
+
+
 
 def errorhandling(request):
     return render(request, 'home/page-500.html')
