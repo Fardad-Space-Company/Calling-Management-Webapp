@@ -44,7 +44,7 @@
 
         <div class="col-md-4">
             <div class="card card-profile text-center">
-                <div class="profile-image-container" style="background-image: url('{{ user.profile.image.url|default:'/static/assets/img/faces/default.jpg' }}');"></div>
+                <div class="profile-image-container" style="background-image: url('{% if user.profile.image and user.profile.image.url != "profile_pics/default.jpg" %}{{ user.profile.image.url }}{% else %}{{ MEDIA_URL }}profile_pics/default.jpg{% endif %}');"></div>
                 <div class="card-body">
                     <form method="POST" action="" enctype="multipart/form-data">
                         {% csrf_token %}
