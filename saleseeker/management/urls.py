@@ -13,5 +13,6 @@ urlpatterns = [
     path('shop/crmbackend', views.crmbackend_data, name='crmbackend'),
     path('call-history', views.call_history, name='call-history'),
     path('error/', views.errorhandling, name= 'error_url' ),
+    path('get-username/<int:employeeID>/',views.get_username_by_employee_id, name='get_username_by_employee_id')
     
 ]

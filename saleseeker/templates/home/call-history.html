@@ -1,6 +1,6 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}Call History for sale team{% endblock %}
+{% block title %}Call History for Sale Team{% endblock %}
 
 {% block stylesheets %}
 <style>
@@ -19,67 +19,119 @@
     th.sortable {
         cursor: pointer;
     }
+    .text-danger {
+        color: red; /* Adjust styling as needed */
+    }
+    .form-group {
+        margin-right: 10px;
+    }
+    .form-group:last-child {
+        margin-right: 0;
+    }
 </style>
 {% endblock stylesheets %}
 
 {% block content %}
 <div class="container">
     <h2>Call History for Sale Team</h2>
-    <form method="get" class="filter-form">
-        <div class="form-group">
+    <form method="get" class="filter-form row">
+        <div class="form-group col-md-6">
             <label for="shop_name">Filter by Shop Name:</label>
-            <input type="text" name="shop_name" id="shop_name" class="form-control" value="{{ shop_name }}">
+            <select name="shop_name" id="shop_name" class="form-control">
+                <option value="">-- Select Shop Name --</option>
+                {% for shop in all_shop_names %}
+                    <option value="{{ shop }}" {% if shop == shop_name %}selected{% endif %}>
+                        {{ shop }}
+                    </option>
+                {% endfor %}
+            </select>
         </div>
-        <button type="submit" class="btn btn-primary">Filter</button>
+        <div class="form-group col-md-4">
+            <label for="employee_id">Filter by Employee ID:</label>
+            <select name="employee_id" id="employee_id" class="form-control">
+                <option value="">-- Select Employee ID --</option>
+                {% for employee in all_employee_ids %}
+                    <option value="{{ employee.employee_id }}" {% if employee.employee_id == employee_id %}selected{% endif %}>
+                        {{ employee.employee_id }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary" style="margin-top: 32px;">Filter</button>
+        </div>
     </form>
     <table class="table" id="callHistoryTable">
         <thead>
             <tr>
                 <th class="sortable">
-                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&sort_by=EmployeeID&sort_order={% if sort_by == 'EmployeeID' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Employee ID</a>
+                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by=EmployeeID&sort_order={% if sort_by == 'EmployeeID' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Employee ID</a>
                 </th>
                 <th class="sortable">
-                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&sort_by=ShopName&sort_order={% if sort_by == 'ShopName' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Shop Name</a>
+                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by=ShopName&sort_order={% if sort_by == 'ShopName' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Shop Name</a>
                 </th>
                 <th class="sortable">
-                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&sort_by=Date&sort_order={% if sort_by == 'Date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date</a>
+                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by=Date&sort_order={% if sort_by == 'Date' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Date</a>
                 </th>
                 <th class="sortable">
-                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&sort_by=DealStatus&sort_order={% if sort_by == 'DealStatus' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Deal Status</a>
+                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by=DealStatus&sort_order={% if sort_by == 'DealStatus' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Deal Status</a>
                 </th>
                 <th class="sortable">
-                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&sort_by=Shop_Status&sort_order={% if sort_by == 'Shop_Status' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Shop Status</a>
+                    <a href="?page={{ current_page }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by=Shop_Status&sort_order={% if sort_by == 'Shop_Status' and sort_order == 'asc' %}desc{% else %}asc{% endif %}">Shop Status</a>
                 </th>
             </tr>
         </thead>
-        <tbody>
-            {% for entry in crm_data %}
-            <tr>
-                <td>{{ entry.user.username }}</td>
-                <td>{{ entry.ShopName }}</td>
-                <td>{{ entry.Date }}</td>
-                <td>{{ entry.DealStatus }}</td>
-                <td>{{ entry.Shop_Status }}</td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5">No call history entries found.</td>
-            </tr>
-            {% endfor %}
+        <tbody id="callHistoryTableBody">
+            {% if crm_data %}
+                {% for item in crm_data %}
+                    <tr>
+                        <td>{{ item.EmployeeID_id }}</td>
+                        <td>{{ item.ShopName }}</td>
+                        <td>{{ item.Date }}</td>
+                        <td>{{ item.get_DealStatus_display }}</td>
+                        <td>{{ item.get_Shop_Status_display }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="5">No data available</td>
+                </tr>
+            {% endif %}
         </tbody>
     </table>
     <div class="pagination">
         {% if crm_data.has_previous %}
-        <a class="btn btn-primary" href="?page={{ crm_data.previous_page_number }}&shop_name={{ shop_name }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}">Previous</a>
+        <a class="btn btn-primary" href="?page={{ crm_data.previous_page_number }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}">Previous</a>
         {% else %}
         <button class="btn btn-primary" disabled>Previous</button>
         {% endif %}
-        <span class="page-info">Page {{ crm_data.number }} of {{ total_pages }}</span>
+        <span class="page-info">Page {{ crm_data.number }} of {{ crm_data.paginator.num_pages }}</span>
         {% if crm_data.has_next %}
-        <a class="btn btn-primary" href="?page={{ crm_data.next_page_number }}&shop_name={{ shop_name }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}">Next</a>
+        <a class="btn btn-primary" href="?page={{ crm_data.next_page_number }}&shop_name={{ shop_name }}&employee_id={{ employee_id }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}">Next</a>
         {% else %}
         <button class="btn btn-primary" disabled>Next</button>
         {% endif %}
     </div>
 </div>
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Initialize Select2 for Shop Name dropdown
+        $('#shop_name').select2({
+            placeholder: '-- Select Shop Name --',
+            allowClear: true
+        });
+
+        // Initialize Select2 for Employee ID dropdown
+        $('#employee_id').select2({
+            placeholder: '-- Select Employee ID --',
+            allowClear: true
+        });
+    });
+</script>
+{% endblock scripts %}
+
 {% endblock content %}

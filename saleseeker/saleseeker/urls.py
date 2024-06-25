@@ -22,5 +22,6 @@ urlpatterns = [
   
     path("", include("management.urls")),
     path("", include("accounts.urls"))# Auth routes - login / register
+    
 
 ]

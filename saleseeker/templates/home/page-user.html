@@ -3,16 +3,15 @@
 {% block title %} User Page {% endblock %}
 
 {% block stylesheets %}
-<!-- Additional stylesheets -->
 <style>
   .profile-image-container {
-    width: 200px; /* Adjusted size for better visibility */
+    width: 200px;
     height: 200px;
     background-size: cover;
     background-position: center;
-    border-radius: 50%; /* Makes the container circular */
+    border-radius: 50%;
     display: block;
-    margin: 20px auto; /* Centers the image in the div */
+    margin: 20px auto;
   }
 </style>
 {% endblock stylesheets %}
@@ -20,11 +19,10 @@
 {% block content %}
 <div class="container mt-4">
     <div class="row">
-        <!-- User Information Section -->
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body">
-                    <form method="POST">
+                    <form method="POST" action="" enctype="multipart/form-data">
                         {% csrf_token %}
                         <div class="form-group">
                             <label class="bmd-label-floating">Username</label>
@@ -36,23 +34,22 @@
                         </div>
                         <div class="form-group">
                             <label for="id_rule" class="bmd-label-floating">Rule (Optional)</label>
-                            <input type="text" id="id_rule" name="rule" class="form-control">
+                            <input type="text" id="id_rule" name="rule" class="form-control" value="{{ user.profile.rule }}">
                         </div>
-                        <button type="submit" class="btn btn-primary btn-round">Update Profile</button>
+                        <button type="submit" class="btn btn-primary btn-round" style="background-color: #f57c00; border-color: #f57c00;">Update Profile</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Image Section -->
         <div class="col-md-4">
             <div class="card card-profile text-center">
-                <div class="profile-image-container" style="background-image: url('{{ user.profile.image.url|default:'/static/assets/img/faces/default.jpg' }}');"></div>
+                <div class="profile-image-container" style="background-image: url('{% if user.profile.image and user.profile.image.url != "profile_pics/default.jpg" %}{{ user.profile.image.url }}{% else %}{{ MEDIA_URL }}profile_pics/default.jpg{% endif %}');"></div>
                 <div class="card-body">
-                    <form method="POST" enctype="multipart/form-data">
+                    <form method="POST" action="" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="file" name="image" class="form-control" style="margin-bottom: 10px;">
-                        <button type="submit" class="btn btn-primary btn-round">Upload New Image</button>
+                        <button type="submit" class="btn btn-primary btn-round" style="background-color: #f57c00; border-color: #f57c00;" >Upload New Image</button>
                     </form>
                 </div>
             </div>
@@ -62,5 +59,4 @@
 {% endblock content %}
 
 {% block javascripts %}
-<!-- Additional JavaScripts -->
 {% endblock javascripts %}
